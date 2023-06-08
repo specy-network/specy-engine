@@ -68,3 +68,9 @@ uint32_t EngineServer::RunServer()
     this->server->Wait();
     return 0;
 }
+
+void EngineServer::RegisteEnclaveID(sgx_enclave_id_t key_management_id, sgx_enclave_id_t binding_id)
+{
+    this->keyManagementEnclaveID = key_management_id;
+    this->bindingEnclaveID = binding_id;
+}

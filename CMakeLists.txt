@@ -29,6 +29,26 @@ find_package(SGX REQUIRED)
 # Prepare Protobuf and gRPC enabling environment
 include(cmake/ProtobufGRPC.cmake)
 
+# === Enclave EDL files configuration ===
+set(KEY_MANAGEMENT_EDL_FILE key_management/trusted/KeyManagementEnclave.edl)
+set(RULE_EDL_FILE rule/trusted/RuleEnclave.edl)
+set(BINDING_EDL_FILE binding/trusted/BindingEnclave.edl)
+set(LOCAL_ATTESTATION_EDL_FILE common/local_attestation/trusted/LocalAttestation.edl)
+
+set(EDL_SEARCH_PATHS common/local_attestation/trusted
+                     common/registration/trusted)
+
+# === Configure trusted (Enclave) compilation ===
+
+# Compiles Key Management Module
+add_subdirectory(key_management)
+
+# Compiles Rule Check Module
+add_subdirectory(rule)
+
+# Compiles Binding Module
+add_subdirectory(binding)
+
 # Entrypoint source files
 set(M_SRCS main.cpp)
 
@@ -38,6 +58,11 @@ file(GLOB_RECURSE SRCS_COMMON_UNTRUSTED
     LIST_DIRECTORIES false 
     CONFIGURE_DEPENDS
     third_party/json_lib/*.cpp
+    common/base64/*.cpp
+    common/data_types/binding/*.cpp
+    common/local_attestation/untrusted/*.cpp
+    common/remote_attestation/*.cpp
+    common/utils/untrusted/*.cpp
     )
 
 # Protos untrusted source files
@@ -60,34 +85,56 @@ file(GLOB_RECURSE SRCS_DATASERVICE
     dataservice/*.cpp
     )
 
+# Binding untrusted source files
+file(GLOB_RECURSE SRCS_BINDING_UNTRUSTED
+    LIST_DIRECTORIES false 
+    CONFIGURE_DEPENDS
+    binding/untrusted/*.cpp)
+
+# Rule untrusted source files
+file(GLOB_RECURSE SRCS_RULE_UNTRUSTED
+    LIST_DIRECTORIES false 
+    CONFIGURE_DEPENDS
+    rule/untrusted/*.cpp)
+
+# Key Management untrusted source files
+file(GLOB_RECURSE SRCS_KEY_MANAGEMENT_UNTRUSTED
+    LIST_DIRECTORIES false 
+    CONFIGURE_DEPENDS
+    key_management/untrusted/*.cpp)
+
+
+
 list(APPEND U_SRCS 
                    ${SRCS_COMMON_UNTRUSTED} 
                    ${SRCS_PROTOS_UNTRUSTED}
                    ${SRCS_ENGINE}
-                   ${SRCS_DATASERVICE})
+                   ${SRCS_DATASERVICE}
+                   ${SRCS_BINDING_UNTRUSTED}
+                   ${SRCS_KEY_MANAGEMENT_UNTRUSTED}
+                   ${SRCS_RULE_UNTRUSTED})
+
 list(APPEND SRCS ${M_SRCS} ${U_SRCS})
 
 # === Define Target for untrusted (App) compilation ===
 
 # # Main Entrypoint
-add_executable(specy-engine ${SRCS})
+# add_executable(specy-engine ${SRCS})
 
-# add_untrusted_executable(main USE_PREFIX SRCS ${SRCS}
-#                         EDL 
-#                         ${KEY_MANAGEMENT_EDL_FILE} 
-#                         ${RULE_EDL_FILE} 
-#                         ${BINDING_EDL_FILE}
-#                         EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS}
-#                         )
+add_untrusted_executable(specy-engine USE_PREFIX SRCS ${SRCS}
+                        EDL 
+                        ${KEY_MANAGEMENT_EDL_FILE} 
+                        ${RULE_EDL_FILE} 
+                        ${BINDING_EDL_FILE}
+                        EDL_SEARCH_PATHS ${EDL_SEARCH_PATHS}
+                        )
 
-# # add_executable(main ${SRCS})
-
-# # Link generated Enclaves into CMAKE_BINARY_DIR after main is built
-# add_custom_command(TARGET main POST_BUILD
-#                    COMMAND ln -s -f key_management/key_management_enclave.signed.so .
-#                    COMMAND ln -s -f rule/rule_enclave.signed.so .
-#                    COMMAND ln -s -f binding/binding_enclave.signed.so .
-#                    VERBATIM USES_TERMINAL)
+# Link generated Enclaves into CMAKE_BINARY_DIR after specy-engine is built
+add_custom_command(TARGET specy-engine POST_BUILD
+                   COMMAND ln -s -f key_management/key_management_enclave.signed.so .
+                   COMMAND ln -s -f rule/rule_enclave.signed.so .
+                   COMMAND ln -s -f binding/binding_enclave.signed.so .
+                   VERBATIM USES_TERMINAL)
 
 # Third-Party libraries needed by Remote Attestation capability
 add_subdirectory(third_party/spdlog-1.4.2 ./third_party/spdlog)
@@ -121,8 +168,8 @@ target_include_directories(specy-engine PRIVATE .
                                 third_party/spdlog-1.4.2/include
                                 third_party/cppcodec-0.2
                                 third_party/yaml-cpp-0.7.0/include
-                                # third_party/prometheus-cpp
                                 
-                                # protos/trusted_cpp
-                                # protos/untrusted_cpp
+                                protos/trusted
+                                protos/untrusted
+                                include
                                 )

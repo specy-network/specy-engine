@@ -3,13 +3,14 @@
 #include <string>
 #include <thread>
 #include <vector>
-// #include "common/base64/Transform.h"
+#include "common/base64/Transform.h"
 
 #include "RegulatorServiceImpl.h"
 #include "Queue.h"
 #include "Config.h"
 #include <spdlog/spdlog.h>
 #include <google/protobuf/util/json_util.h>
+
 
 static const unsigned long kMaxOutSize = 8192UL;
 
@@ -21,14 +22,26 @@ static string EmitJsonString (const google::protobuf::Message& message) {
     return jsonString;
 }
 
-uint32_t RegulatorServiceImpl::ProofRequestProcess(
+REQUESTPROCESSOR_ERROR_CODE RegulatorServiceImpl::ProofRequestProcess(
     const request_proto::TaskRequest& request,
     request_proto::TaskResponse* response) {
 
     string requestString = request.SerializeAsString();
+    string requestEncodedString = EncodeFromStringToString(requestString);
 
-    SPDLOG_INFO("handle receive request {}", requestString);
-    return 0;
+    BINDING_ERROR_CODE errorCode;
+    char* responseBuffer = (char*) malloc(kMaxOutSize);
+#ifdef USE_ENCLAVE_PREFIX
+    BindingEnclave_ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), kMaxOutSize, responseBuffer, kMaxOutSize);
+#else
+    ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), kMaxOutSize, responseBuffer, kMaxOutSize);
+#endif
+    SPDLOG_INFO("return to untrsted zoom");
+    string responseString = DecodeFromCharToString(responseBuffer);
+    response->ParseFromString(responseString);
+
+    SPDLOG_INFO("Receive proof response {}", responseString);
+    return kRPSUCCESS;
 }
 
 

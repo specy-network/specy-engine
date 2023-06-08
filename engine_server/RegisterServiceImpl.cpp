@@ -2,6 +2,9 @@
 #include <vector>
 #include <spdlog/spdlog.h>
 #include "RegisterServiceImpl.h"
+#include "common/remote_attestation/untrusted/EnclaveQuote.h"
+#include "common/base64/base64.h"
+
 
 using namespace std;
 
@@ -13,23 +16,79 @@ string mock_verification_report = "{\"nonce\":\"35E8FB64ACFB4A8E\",\"id\":\"2847
 grpc::Status RegisterServiceImpl::GetEngineInfo(::grpc::ServerContext* context, 
                                             const request_proto::EngineInfoRequest* request, 
                                             request_proto::EngineInfoResponse* response) {
-    SPDLOG_INFO("--- GetRegisterInfo start cosmos---");
+    SPDLOG_INFO("--- GetEngineInfo start cosmos---");
     uint32_t error_code = StartRemoteAttestationCosmos(response);
 
-    SPDLOG_INFO("--- GetRegisterInfo finish ---");
+    if (KEYMANAGEMENT_ERROR_CODE::kECALL_INIT_ERROR == error_code)
+    {
+        SPDLOG_INFO("fail to call key enclave, ecc_pubkey is null");
+        response->set_error_info("fail to call key enclave, ecc_pubkey is null");
+        return grpc::Status(grpc::StatusCode::INTERNAL, "fail to call key enclave, ecc_pubkey is null");
+    }
+
+    if (KEYMANAGEMENT_ERROR_CODE::kGET_QUOTE_ERROR == error_code)
+    {
+        SPDLOG_INFO("fail to call get enclave quote, ecc_pubkey is null");
+        response->set_error_info("fail to call get enclave quote, ecc_pubkey is null");
+        return grpc::Status(grpc::StatusCode::INTERNAL, "fail to call get enclave quote, ecc_pubkey is null");
+    }
+
+    SPDLOG_INFO("--- GetEngineInfo finish ---");
     return grpc::Status::OK;
 }
 
 
 
-uint32_t RegisterServiceImpl::StartRemoteAttestationCosmos(request_proto::EngineInfoResponse *const register_resp) {
+KEYMANAGEMENT_ERROR_CODE RegisterServiceImpl::StartRemoteAttestationCosmos(request_proto::EngineInfoResponse *const register_resp) {
 
-    uint32_t enclave_ret;
+    KEYMANAGEMENT_ERROR_CODE enclave_ret;
 
     string attestation_verification_report;
 
-    SPDLOG_INFO("start remote attestation");
 
-    return 0;
+    SPDLOG_INFO("start remote attestation");
+    
+#ifdef BUILD_ONLY_REGISTRATION_ENCLAVE
+    int ret = ecall_init(eid, &enclave_ret);
+#else
+    int ret = KeyManagementEnclave_ecall_init(eid, &enclave_ret);
+#endif
+
+    if (ret != SGX_SUCCESS)
+    {
+        SPDLOG_INFO("failed to invoke KeyManagementEnclave_ecall_init, error code: " + ret);
+        return KEYMANAGEMENT_ERROR_CODE::kECALL_INIT_ERROR;
+    }
+    if (KEYMANAGEMENT_ERROR_CODE::kKM_SUCCESS != enclave_ret)
+    {
+        SPDLOG_INFO("occur an error during init keyManagementEnclave, error code: " + enclave_ret);
+        return enclave_ret;
+    }
+    
+
+    uint8_t *pubkey = (uint8_t *)malloc(PUB_KEY_SIZE);
+    uint8_t *pubEncryptKey = (uint8_t *)malloc(PUB_ENCRYPT_KEY_SIZE);
+
+    std::shared_ptr<std::vector<uint8_t>> quote;
+    KEYMANAGEMENT_ERROR_CODE error_code = GetEnclaveQuote(eid, pubkey, pubEncryptKey, quote);
+    if (KEYMANAGEMENT_ERROR_CODE::kGET_QUOTE_ERROR == error_code)
+    {
+        return KEYMANAGEMENT_ERROR_CODE::kGET_QUOTE_ERROR;
+    }
+    
+
+    // IntelIAS ias(intel_api_primary, intel_api_secondary, IntelIAS::DEVELOPMENT);
+    // TODO change to real Intel IAS attestation report
+    attestation_verification_report = mock_verification_report;
+
+    std::string base64_pk = base64_encode((const unsigned char *)pubkey, PUB_KEY_SIZE);
+
+    register_resp->set_enclave_pk(base64_pk);
+    register_resp->set_ias_attestation_report(attestation_verification_report);
+
+    SAFE_FREE(pubkey);
+    SAFE_FREE(pubEncryptKey);
+
+    return KEYMANAGEMENT_ERROR_CODE::kKM_SUCCESS;
 }
 

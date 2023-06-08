@@ -20,6 +20,21 @@ int main(int argc, char *argv[])
     }
 
     SpecyEngine specyEngine;
+    // first, load all enclaves needed, i.e., key management, rule check, and binding
+    if (specyEngine.LoadEnclaves() != SGX_SUCCESS)
+    {
+        // Print log with manul-set file name and line number.
+        SPDLOG_INFO("Load Enclave Failure");
+        return int(EngineStatus::kEnclaveLoadError);
+    }
+
+    // then, establish secure channel between enclave pairs through local attestation
+    if (specyEngine.StartLocalAttesttion() != SGX_SUCCESS)
+    {
+        SPDLOG_INFO("Local Attestion Failure");
+        return int(EngineStatus::kLocalAttestationError);
+    }
+
     // create http client use for query data service
     if (specyEngine.LaunchDataService() != 0)
     {

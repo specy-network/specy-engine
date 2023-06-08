@@ -2,39 +2,19 @@ syntax = "proto3";
 
 package e2e_message;
 
-
-// elements which consist of RuleCheckRequest are map to the tokens in the Binding Language
-message RuleItem {
-    string ruleFileName = 1;
-    repeated string ruleId = 2;
-}
-
 message RuleCheckRequest {
-    string contractId = 1;
-    bytes txHash = 2;
-    uint64 blockHeight = 3;
-    uint64 txIndex = 4;
-    repeated RuleItem ruleItems = 5;
-}
-
-
-// rule Check Response
-// if status == true, RuleCheckResult should be empty
-// if status == false, RuleCheckResult should contain the error info of the rule
-message ErrorInfo {
-    bool status = 1;
-    string ruleFileName = 2;
-    string ruleFileID = 3;
-    string errorString = 4;
+    bytes taskhash = 1;
 }
 
 message RuleCheckResult {
-    string contractid = 1;
-    bool status = 2;
-    repeated ErrorInfo errorInfo = 3;
+    bool status = 1;
+    bytes task_result = 2; 
+    string error_info = 3; // empty if status is true
 }
 
 message RuleCheckResponse {
-    bool status = 1;
-    repeated RuleCheckResult results = 2;
+    bytes taskhash = 1;  
+    RuleCheckResult result =2;  
+    bytes rule_file_hash = 3;
+    bytes signature = 4;
 }

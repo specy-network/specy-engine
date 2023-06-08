@@ -16,7 +16,7 @@
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
-extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_RuleCheckRequest_RuleCheck_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_RuleCheckRequest_RuleCheck_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_RuleCheckResponse_RuleCheck_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_Signature_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_SignInput_Signature_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_Signature_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_SignOutput_Signature_2eproto;

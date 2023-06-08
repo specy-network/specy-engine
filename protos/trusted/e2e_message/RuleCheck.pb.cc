@@ -16,22 +16,12 @@
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
-extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ErrorInfo_RuleCheck_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_RuleItem_RuleCheck_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_RuleCheckResult_RuleCheck_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_RuleCheck_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_RuleCheckResult_RuleCheck_2eproto;
 namespace e2e_message {
-class RuleItemDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<RuleItem> _instance;
-} _RuleItem_default_instance_;
 class RuleCheckRequestDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<RuleCheckRequest> _instance;
 } _RuleCheckRequest_default_instance_;
-class ErrorInfoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<ErrorInfo> _instance;
-} _ErrorInfo_default_instance_;
 class RuleCheckResultDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<RuleCheckResult> _instance;
@@ -41,20 +31,6 @@ class RuleCheckResponseDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<RuleCheckResponse> _instance;
 } _RuleCheckResponse_default_instance_;
 }  // namespace e2e_message
-static void InitDefaultsRuleItem_RuleCheck_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::e2e_message::_RuleItem_default_instance_;
-    new (ptr) ::e2e_message::RuleItem();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::e2e_message::RuleItem::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_RuleItem_RuleCheck_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRuleItem_RuleCheck_2eproto}, {}};
-
 static void InitDefaultsRuleCheckRequest_RuleCheck_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -66,23 +42,8 @@ static void InitDefaultsRuleCheckRequest_RuleCheck_2eproto() {
   ::e2e_message::RuleCheckRequest::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_RuleCheckRequest_RuleCheck_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsRuleCheckRequest_RuleCheck_2eproto}, {
-      &scc_info_RuleItem_RuleCheck_2eproto.base,}};
-
-static void InitDefaultsErrorInfo_RuleCheck_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::e2e_message::_ErrorInfo_default_instance_;
-    new (ptr) ::e2e_message::ErrorInfo();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::e2e_message::ErrorInfo::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_ErrorInfo_RuleCheck_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsErrorInfo_RuleCheck_2eproto}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_RuleCheckRequest_RuleCheck_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRuleCheckRequest_RuleCheck_2eproto}, {}};
 
 static void InitDefaultsRuleCheckResult_RuleCheck_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -95,9 +56,8 @@ static void InitDefaultsRuleCheckResult_RuleCheck_2eproto() {
   ::e2e_message::RuleCheckResult::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_RuleCheckResult_RuleCheck_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsRuleCheckResult_RuleCheck_2eproto}, {
-      &scc_info_ErrorInfo_RuleCheck_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<0> scc_info_RuleCheckResult_RuleCheck_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRuleCheckResult_RuleCheck_2eproto}, {}};
 
 static void InitDefaultsRuleCheckResponse_RuleCheck_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -115,72 +75,48 @@ static void InitDefaultsRuleCheckResponse_RuleCheck_2eproto() {
       &scc_info_RuleCheckResult_RuleCheck_2eproto.base,}};
 
 void InitDefaults_RuleCheck_2eproto() {
-  ::google::protobuf::internal::InitSCC(&scc_info_RuleItem_RuleCheck_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_RuleCheckRequest_RuleCheck_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_ErrorInfo_RuleCheck_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_RuleCheckResult_RuleCheck_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_RuleCheckResponse_RuleCheck_2eproto.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_RuleCheck_2eproto[5];
+::google::protobuf::Metadata file_level_metadata_RuleCheck_2eproto[3];
 constexpr ::google::protobuf::EnumDescriptor const** file_level_enum_descriptors_RuleCheck_2eproto = nullptr;
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_RuleCheck_2eproto = nullptr;
 
 const ::google::protobuf::uint32 TableStruct_RuleCheck_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleItem, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleItem, rulefilename_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleItem, ruleid_),
-  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, contractid_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, txhash_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, blockheight_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, txindex_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, ruleitems_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::ErrorInfo, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::ErrorInfo, status_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::ErrorInfo, rulefilename_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::ErrorInfo, rulefileid_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::ErrorInfo, errorstring_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckRequest, taskhash_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, contractid_),
   PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, status_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, errorinfo_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, task_result_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResult, error_info_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, status_),
-  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, results_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, taskhash_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, result_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, rule_file_hash_),
+  PROTOBUF_FIELD_OFFSET(::e2e_message::RuleCheckResponse, signature_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::e2e_message::RuleItem)},
-  { 7, -1, sizeof(::e2e_message::RuleCheckRequest)},
-  { 17, -1, sizeof(::e2e_message::ErrorInfo)},
-  { 26, -1, sizeof(::e2e_message::RuleCheckResult)},
-  { 34, -1, sizeof(::e2e_message::RuleCheckResponse)},
+  { 0, -1, sizeof(::e2e_message::RuleCheckRequest)},
+  { 6, -1, sizeof(::e2e_message::RuleCheckResult)},
+  { 14, -1, sizeof(::e2e_message::RuleCheckResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::e2e_message::_RuleItem_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::e2e_message::_RuleCheckRequest_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::e2e_message::_ErrorInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::e2e_message::_RuleCheckResult_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::e2e_message::_RuleCheckResponse_default_instance_),
 };
@@ -188,28 +124,22 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 ::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_RuleCheck_2eproto = {
   {}, AddDescriptors_RuleCheck_2eproto, "RuleCheck.proto", schemas,
   file_default_instances, TableStruct_RuleCheck_2eproto::offsets,
-  file_level_metadata_RuleCheck_2eproto, 5, file_level_enum_descriptors_RuleCheck_2eproto, file_level_service_descriptors_RuleCheck_2eproto,
+  file_level_metadata_RuleCheck_2eproto, 3, file_level_enum_descriptors_RuleCheck_2eproto, file_level_service_descriptors_RuleCheck_2eproto,
 };
 
 const char descriptor_table_protodef_RuleCheck_2eproto[] =
-  "\n\017RuleCheck.proto\022\013e2e_message\"0\n\010RuleIt"
-  "em\022\024\n\014ruleFileName\030\001 \001(\t\022\016\n\006ruleId\030\002 \003(\t"
-  "\"\206\001\n\020RuleCheckRequest\022\022\n\ncontractId\030\001 \001("
-  "\t\022\016\n\006txHash\030\002 \001(\014\022\023\n\013blockHeight\030\003 \001(\004\022\017"
-  "\n\007txIndex\030\004 \001(\004\022(\n\truleItems\030\005 \003(\0132\025.e2e"
-  "_message.RuleItem\"Z\n\tErrorInfo\022\016\n\006status"
-  "\030\001 \001(\010\022\024\n\014ruleFileName\030\002 \001(\t\022\022\n\nruleFile"
-  "ID\030\003 \001(\t\022\023\n\013errorString\030\004 \001(\t\"`\n\017RuleChe"
-  "ckResult\022\022\n\ncontractid\030\001 \001(\t\022\016\n\006status\030\002"
-  " \001(\010\022)\n\terrorInfo\030\003 \003(\0132\026.e2e_message.Er"
-  "rorInfo\"R\n\021RuleCheckResponse\022\016\n\006status\030\001"
-  " \001(\010\022-\n\007results\030\002 \003(\0132\034.e2e_message.Rule"
-  "CheckResultb\006proto3"
+  "\n\017RuleCheck.proto\022\013e2e_message\"$\n\020RuleCh"
+  "eckRequest\022\020\n\010taskhash\030\001 \001(\014\"J\n\017RuleChec"
+  "kResult\022\016\n\006status\030\001 \001(\010\022\023\n\013task_result\030\002"
+  " \001(\014\022\022\n\nerror_info\030\003 \001(\t\"~\n\021RuleCheckRes"
+  "ponse\022\020\n\010taskhash\030\001 \001(\014\022,\n\006result\030\002 \001(\0132"
+  "\034.e2e_message.RuleCheckResult\022\026\n\016rule_fi"
+  "le_hash\030\003 \001(\014\022\021\n\tsignature\030\004 \001(\014b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_RuleCheck_2eproto = {
   false, InitDefaults_RuleCheck_2eproto, 
   descriptor_table_protodef_RuleCheck_2eproto,
-  "RuleCheck.proto", &assign_descriptors_table_RuleCheck_2eproto, 499,
+  "RuleCheck.proto", &assign_descriptors_table_RuleCheck_2eproto, 280,
 };
 
 void AddDescriptors_RuleCheck_2eproto() {
@@ -225,371 +155,6 @@ namespace e2e_message {
 
 // ===================================================================
 
-void RuleItem::InitAsDefaultInstance() {
-}
-class RuleItem::HasBitSetters {
- public:
-};
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int RuleItem::kRuleFileNameFieldNumber;
-const int RuleItem::kRuleIdFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-RuleItem::RuleItem()
-  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:e2e_message.RuleItem)
-}
-RuleItem::RuleItem(const RuleItem& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr),
-      ruleid_(from.ruleid_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  rulefilename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.rulefilename().size() > 0) {
-    rulefilename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefilename_);
-  }
-  // @@protoc_insertion_point(copy_constructor:e2e_message.RuleItem)
-}
-
-void RuleItem::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_RuleItem_RuleCheck_2eproto.base);
-  rulefilename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-RuleItem::~RuleItem() {
-  // @@protoc_insertion_point(destructor:e2e_message.RuleItem)
-  SharedDtor();
-}
-
-void RuleItem::SharedDtor() {
-  rulefilename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void RuleItem::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const RuleItem& RuleItem::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_RuleItem_RuleCheck_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void RuleItem::Clear() {
-// @@protoc_insertion_point(message_clear_start:e2e_message.RuleItem)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  ruleid_.Clear();
-  rulefilename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  _internal_metadata_.Clear();
-}
-
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* RuleItem::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<RuleItem*>(object);
-  ::google::protobuf::int32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::uint32 tag;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // string ruleFileName = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.RuleItem.ruleFileName");
-        object = msg->mutable_rulefilename();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // repeated string ruleId = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        do {
-          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-          ctx->extra_parse_data().SetFieldName("e2e_message.RuleItem.ruleId");
-          object = msg->add_ruleid();
-          if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-            parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-            goto string_till_end;
-          }
-          GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-          ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-          ptr += size;
-          if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 18 && (ptr += 1));
-        break;
-      }
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->EndGroup(tag);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-string_till_end:
-  static_cast<::std::string*>(object)->clear();
-  static_cast<::std::string*>(object)->reserve(size);
-  goto len_delim_till_end;
-len_delim_till_end:
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                               {parser_till_end, object}, size);
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-bool RuleItem::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:e2e_message.RuleItem)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string ruleFileName = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_rulefilename()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.RuleItem.ruleFileName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // repeated string ruleId = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->add_ruleid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->ruleid(this->ruleid_size() - 1).data(),
-            static_cast<int>(this->ruleid(this->ruleid_size() - 1).length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.RuleItem.ruleId"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:e2e_message.RuleItem)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:e2e_message.RuleItem)
-  return false;
-#undef DO_
-}
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-
-void RuleItem::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:e2e_message.RuleItem)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string ruleFileName = 1;
-  if (this->rulefilename().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleItem.ruleFileName");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->rulefilename(), output);
-  }
-
-  // repeated string ruleId = 2;
-  for (int i = 0, n = this->ruleid_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->ruleid(i).data(), static_cast<int>(this->ruleid(i).length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleItem.ruleId");
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->ruleid(i), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:e2e_message.RuleItem)
-}
-
-::google::protobuf::uint8* RuleItem::InternalSerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:e2e_message.RuleItem)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string ruleFileName = 1;
-  if (this->rulefilename().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleItem.ruleFileName");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->rulefilename(), target);
-  }
-
-  // repeated string ruleId = 2;
-  for (int i = 0, n = this->ruleid_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->ruleid(i).data(), static_cast<int>(this->ruleid(i).length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleItem.ruleId");
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(2, this->ruleid(i), target);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:e2e_message.RuleItem)
-  return target;
-}
-
-size_t RuleItem::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:e2e_message.RuleItem)
-  size_t total_size = 0;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated string ruleId = 2;
-  total_size += 1 *
-      ::google::protobuf::internal::FromIntSize(this->ruleid_size());
-  for (int i = 0, n = this->ruleid_size(); i < n; i++) {
-    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-      this->ruleid(i));
-  }
-
-  // string ruleFileName = 1;
-  if (this->rulefilename().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->rulefilename());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void RuleItem::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:e2e_message.RuleItem)
-  GOOGLE_DCHECK_NE(&from, this);
-  const RuleItem* source =
-      ::google::protobuf::DynamicCastToGenerated<RuleItem>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:e2e_message.RuleItem)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:e2e_message.RuleItem)
-    MergeFrom(*source);
-  }
-}
-
-void RuleItem::MergeFrom(const RuleItem& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:e2e_message.RuleItem)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  ruleid_.MergeFrom(from.ruleid_);
-  if (from.rulefilename().size() > 0) {
-
-    rulefilename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefilename_);
-  }
-}
-
-void RuleItem::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:e2e_message.RuleItem)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void RuleItem::CopyFrom(const RuleItem& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:e2e_message.RuleItem)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool RuleItem::IsInitialized() const {
-  return true;
-}
-
-void RuleItem::Swap(RuleItem* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void RuleItem::InternalSwap(RuleItem* other) {
-  using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  ruleid_.InternalSwap(CastToBase(&other->ruleid_));
-  rulefilename_.Swap(&other->rulefilename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-}
-
-::google::protobuf::Metadata RuleItem::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_RuleCheck_2eproto);
-  return ::file_level_metadata_RuleCheck_2eproto[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
 void RuleCheckRequest::InitAsDefaultInstance() {
 }
 class RuleCheckRequest::HasBitSetters {
@@ -597,11 +162,7 @@ class RuleCheckRequest::HasBitSetters {
 };
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int RuleCheckRequest::kContractIdFieldNumber;
-const int RuleCheckRequest::kTxHashFieldNumber;
-const int RuleCheckRequest::kBlockHeightFieldNumber;
-const int RuleCheckRequest::kTxIndexFieldNumber;
-const int RuleCheckRequest::kRuleItemsFieldNumber;
+const int RuleCheckRequest::kTaskhashFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 RuleCheckRequest::RuleCheckRequest()
@@ -611,31 +172,19 @@ RuleCheckRequest::RuleCheckRequest()
 }
 RuleCheckRequest::RuleCheckRequest(const RuleCheckRequest& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr),
-      ruleitems_(from.ruleitems_) {
+      _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  contractid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.contractid().size() > 0) {
-    contractid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.contractid_);
+  taskhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.taskhash().size() > 0) {
+    taskhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.taskhash_);
   }
-  txhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.txhash().size() > 0) {
-    txhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txhash_);
-  }
-  ::memcpy(&blockheight_, &from.blockheight_,
-    static_cast<size_t>(reinterpret_cast<char*>(&txindex_) -
-    reinterpret_cast<char*>(&blockheight_)) + sizeof(txindex_));
   // @@protoc_insertion_point(copy_constructor:e2e_message.RuleCheckRequest)
 }
 
 void RuleCheckRequest::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_RuleCheckRequest_RuleCheck_2eproto.base);
-  contractid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  txhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&blockheight_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&txindex_) -
-      reinterpret_cast<char*>(&blockheight_)) + sizeof(txindex_));
+  taskhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 RuleCheckRequest::~RuleCheckRequest() {
@@ -644,8 +193,7 @@ RuleCheckRequest::~RuleCheckRequest() {
 }
 
 void RuleCheckRequest::SharedDtor() {
-  contractid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  txhash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  taskhash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void RuleCheckRequest::SetCachedSize(int size) const {
@@ -663,12 +211,7 @@ void RuleCheckRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ruleitems_.Clear();
-  contractid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  txhash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&blockheight_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&txindex_) -
-      reinterpret_cast<char*>(&blockheight_)) + sizeof(txindex_));
+  taskhash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -685,28 +228,12 @@ const char* RuleCheckRequest::_InternalParse(const char* begin, const char* end,
     ptr = ::google::protobuf::io::Parse32(ptr, &tag);
     GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
     switch (tag >> 3) {
-      // string contractId = 1;
+      // bytes taskhash = 1;
       case 1: {
         if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.RuleCheckRequest.contractId");
-        object = msg->mutable_contractid();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // bytes txHash = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        object = msg->mutable_txhash();
+        object = msg->mutable_taskhash();
         if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
           parser_till_end = ::google::protobuf::internal::GreedyStringParser;
           goto string_till_end;
@@ -714,36 +241,6 @@ const char* RuleCheckRequest::_InternalParse(const char* begin, const char* end,
         GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheck(ptr, size, ctx));
         ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
         ptr += size;
-        break;
-      }
-      // uint64 blockHeight = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
-        msg->set_blockheight(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // uint64 txIndex = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 32) goto handle_unusual;
-        msg->set_txindex(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // repeated .e2e_message.RuleItem ruleItems = 5;
-      case 5: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 42) goto handle_unusual;
-        do {
-          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-          parser_till_end = ::e2e_message::RuleItem::_InternalParse;
-          object = msg->add_ruleitems();
-          if (size > end - ptr) goto len_delim_till_end;
-          ptr += size;
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
-              {parser_till_end, object}, ptr - size, ptr));
-          if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 42 && (ptr += 1));
         break;
       }
       default: {
@@ -780,63 +277,11 @@ bool RuleCheckRequest::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string contractId = 1;
+      // bytes taskhash = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_contractid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->contractid().data(), static_cast<int>(this->contractid().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.RuleCheckRequest.contractId"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bytes txHash = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_txhash()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // uint64 blockHeight = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
-                 input, &blockheight_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // uint64 txIndex = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (32 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
-                 input, &txindex_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // repeated .e2e_message.RuleItem ruleItems = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (42 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_ruleitems()));
+                input, this->mutable_taskhash()));
         } else {
           goto handle_unusual;
         }
@@ -870,39 +315,10 @@ void RuleCheckRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string contractId = 1;
-  if (this->contractid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->contractid().data(), static_cast<int>(this->contractid().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleCheckRequest.contractId");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->contractid(), output);
-  }
-
-  // bytes txHash = 2;
-  if (this->txhash().size() > 0) {
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      2, this->txhash(), output);
-  }
-
-  // uint64 blockHeight = 3;
-  if (this->blockheight() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(3, this->blockheight(), output);
-  }
-
-  // uint64 txIndex = 4;
-  if (this->txindex() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->txindex(), output);
-  }
-
-  // repeated .e2e_message.RuleItem ruleItems = 5;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->ruleitems_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5,
-      this->ruleitems(static_cast<int>(i)),
-      output);
+      1, this->taskhash(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -918,40 +334,11 @@ void RuleCheckRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string contractId = 1;
-  if (this->contractid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->contractid().data(), static_cast<int>(this->contractid().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleCheckRequest.contractId");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->contractid(), target);
-  }
-
-  // bytes txHash = 2;
-  if (this->txhash().size() > 0) {
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->txhash(), target);
-  }
-
-  // uint64 blockHeight = 3;
-  if (this->blockheight() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(3, this->blockheight(), target);
-  }
-
-  // uint64 txIndex = 4;
-  if (this->txindex() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(4, this->txindex(), target);
-  }
-
-  // repeated .e2e_message.RuleItem ruleItems = 5;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->ruleitems_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        5, this->ruleitems(static_cast<int>(i)), target);
+        1, this->taskhash(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -975,43 +362,11 @@ size_t RuleCheckRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .e2e_message.RuleItem ruleItems = 5;
-  {
-    unsigned int count = static_cast<unsigned int>(this->ruleitems_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->ruleitems(static_cast<int>(i)));
-    }
-  }
-
-  // string contractId = 1;
-  if (this->contractid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->contractid());
-  }
-
-  // bytes txHash = 2;
-  if (this->txhash().size() > 0) {
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->txhash());
-  }
-
-  // uint64 blockHeight = 3;
-  if (this->blockheight() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt64Size(
-        this->blockheight());
-  }
-
-  // uint64 txIndex = 4;
-  if (this->txindex() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt64Size(
-        this->txindex());
+        this->taskhash());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -1041,20 +396,9 @@ void RuleCheckRequest::MergeFrom(const RuleCheckRequest& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  ruleitems_.MergeFrom(from.ruleitems_);
-  if (from.contractid().size() > 0) {
+  if (from.taskhash().size() > 0) {
 
-    contractid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.contractid_);
-  }
-  if (from.txhash().size() > 0) {
-
-    txhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.txhash_);
-  }
-  if (from.blockheight() != 0) {
-    set_blockheight(from.blockheight());
-  }
-  if (from.txindex() != 0) {
-    set_txindex(from.txindex());
+    taskhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.taskhash_);
   }
 }
 
@@ -1083,502 +427,11 @@ void RuleCheckRequest::Swap(RuleCheckRequest* other) {
 void RuleCheckRequest::InternalSwap(RuleCheckRequest* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  CastToBase(&ruleitems_)->InternalSwap(CastToBase(&other->ruleitems_));
-  contractid_.Swap(&other->contractid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  taskhash_.Swap(&other->taskhash_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  txhash_.Swap(&other->txhash_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(blockheight_, other->blockheight_);
-  swap(txindex_, other->txindex_);
 }
 
 ::google::protobuf::Metadata RuleCheckRequest::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_RuleCheck_2eproto);
-  return ::file_level_metadata_RuleCheck_2eproto[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
-void ErrorInfo::InitAsDefaultInstance() {
-}
-class ErrorInfo::HasBitSetters {
- public:
-};
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ErrorInfo::kStatusFieldNumber;
-const int ErrorInfo::kRuleFileNameFieldNumber;
-const int ErrorInfo::kRuleFileIDFieldNumber;
-const int ErrorInfo::kErrorStringFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-ErrorInfo::ErrorInfo()
-  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:e2e_message.ErrorInfo)
-}
-ErrorInfo::ErrorInfo(const ErrorInfo& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  rulefilename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.rulefilename().size() > 0) {
-    rulefilename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefilename_);
-  }
-  rulefileid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.rulefileid().size() > 0) {
-    rulefileid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefileid_);
-  }
-  errorstring_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.errorstring().size() > 0) {
-    errorstring_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.errorstring_);
-  }
-  status_ = from.status_;
-  // @@protoc_insertion_point(copy_constructor:e2e_message.ErrorInfo)
-}
-
-void ErrorInfo::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_ErrorInfo_RuleCheck_2eproto.base);
-  rulefilename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  rulefileid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  errorstring_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  status_ = false;
-}
-
-ErrorInfo::~ErrorInfo() {
-  // @@protoc_insertion_point(destructor:e2e_message.ErrorInfo)
-  SharedDtor();
-}
-
-void ErrorInfo::SharedDtor() {
-  rulefilename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  rulefileid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  errorstring_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void ErrorInfo::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const ErrorInfo& ErrorInfo::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_ErrorInfo_RuleCheck_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void ErrorInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:e2e_message.ErrorInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  rulefilename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  rulefileid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  errorstring_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  status_ = false;
-  _internal_metadata_.Clear();
-}
-
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* ErrorInfo::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<ErrorInfo*>(object);
-  ::google::protobuf::int32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::uint32 tag;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // bool status = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
-        msg->set_status(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // string ruleFileName = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.ErrorInfo.ruleFileName");
-        object = msg->mutable_rulefilename();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // string ruleFileID = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.ErrorInfo.ruleFileID");
-        object = msg->mutable_rulefileid();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // string errorString = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 34) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.ErrorInfo.errorString");
-        object = msg->mutable_errorstring();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->EndGroup(tag);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-string_till_end:
-  static_cast<::std::string*>(object)->clear();
-  static_cast<::std::string*>(object)->reserve(size);
-  goto len_delim_till_end;
-len_delim_till_end:
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                               {parser_till_end, object}, size);
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-bool ErrorInfo::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:e2e_message.ErrorInfo)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bool status = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &status_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string ruleFileName = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_rulefilename()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.ErrorInfo.ruleFileName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string ruleFileID = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_rulefileid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->rulefileid().data(), static_cast<int>(this->rulefileid().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.ErrorInfo.ruleFileID"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string errorString = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (34 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_errorstring()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->errorstring().data(), static_cast<int>(this->errorstring().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.ErrorInfo.errorString"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:e2e_message.ErrorInfo)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:e2e_message.ErrorInfo)
-  return false;
-#undef DO_
-}
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-
-void ErrorInfo::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:e2e_message.ErrorInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // bool status = 1;
-  if (this->status() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->status(), output);
-  }
-
-  // string ruleFileName = 2;
-  if (this->rulefilename().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.ruleFileName");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->rulefilename(), output);
-  }
-
-  // string ruleFileID = 3;
-  if (this->rulefileid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefileid().data(), static_cast<int>(this->rulefileid().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.ruleFileID");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->rulefileid(), output);
-  }
-
-  // string errorString = 4;
-  if (this->errorstring().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->errorstring().data(), static_cast<int>(this->errorstring().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.errorString");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->errorstring(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:e2e_message.ErrorInfo)
-}
-
-::google::protobuf::uint8* ErrorInfo::InternalSerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:e2e_message.ErrorInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // bool status = 1;
-  if (this->status() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->status(), target);
-  }
-
-  // string ruleFileName = 2;
-  if (this->rulefilename().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefilename().data(), static_cast<int>(this->rulefilename().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.ruleFileName");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->rulefilename(), target);
-  }
-
-  // string ruleFileID = 3;
-  if (this->rulefileid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->rulefileid().data(), static_cast<int>(this->rulefileid().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.ruleFileID");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->rulefileid(), target);
-  }
-
-  // string errorString = 4;
-  if (this->errorstring().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->errorstring().data(), static_cast<int>(this->errorstring().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.ErrorInfo.errorString");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->errorstring(), target);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:e2e_message.ErrorInfo)
-  return target;
-}
-
-size_t ErrorInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:e2e_message.ErrorInfo)
-  size_t total_size = 0;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string ruleFileName = 2;
-  if (this->rulefilename().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->rulefilename());
-  }
-
-  // string ruleFileID = 3;
-  if (this->rulefileid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->rulefileid());
-  }
-
-  // string errorString = 4;
-  if (this->errorstring().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->errorstring());
-  }
-
-  // bool status = 1;
-  if (this->status() != 0) {
-    total_size += 1 + 1;
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void ErrorInfo::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:e2e_message.ErrorInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  const ErrorInfo* source =
-      ::google::protobuf::DynamicCastToGenerated<ErrorInfo>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:e2e_message.ErrorInfo)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:e2e_message.ErrorInfo)
-    MergeFrom(*source);
-  }
-}
-
-void ErrorInfo::MergeFrom(const ErrorInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:e2e_message.ErrorInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from.rulefilename().size() > 0) {
-
-    rulefilename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefilename_);
-  }
-  if (from.rulefileid().size() > 0) {
-
-    rulefileid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rulefileid_);
-  }
-  if (from.errorstring().size() > 0) {
-
-    errorstring_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.errorstring_);
-  }
-  if (from.status() != 0) {
-    set_status(from.status());
-  }
-}
-
-void ErrorInfo::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:e2e_message.ErrorInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void ErrorInfo::CopyFrom(const ErrorInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:e2e_message.ErrorInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ErrorInfo::IsInitialized() const {
-  return true;
-}
-
-void ErrorInfo::Swap(ErrorInfo* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void ErrorInfo::InternalSwap(ErrorInfo* other) {
-  using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  rulefilename_.Swap(&other->rulefilename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  rulefileid_.Swap(&other->rulefileid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  errorstring_.Swap(&other->errorstring_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(status_, other->status_);
-}
-
-::google::protobuf::Metadata ErrorInfo::GetMetadata() const {
   ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_RuleCheck_2eproto);
   return ::file_level_metadata_RuleCheck_2eproto[kIndexInFileMessages];
 }
@@ -1593,8 +446,8 @@ class RuleCheckResult::HasBitSetters {
 };
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int RuleCheckResult::kContractidFieldNumber;
 const int RuleCheckResult::kStatusFieldNumber;
+const int RuleCheckResult::kTaskResultFieldNumber;
 const int RuleCheckResult::kErrorInfoFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1605,12 +458,15 @@ RuleCheckResult::RuleCheckResult()
 }
 RuleCheckResult::RuleCheckResult(const RuleCheckResult& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr),
-      errorinfo_(from.errorinfo_) {
+      _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  contractid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.contractid().size() > 0) {
-    contractid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.contractid_);
+  task_result_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.task_result().size() > 0) {
+    task_result_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.task_result_);
+  }
+  error_info_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.error_info().size() > 0) {
+    error_info_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.error_info_);
   }
   status_ = from.status_;
   // @@protoc_insertion_point(copy_constructor:e2e_message.RuleCheckResult)
@@ -1619,7 +475,8 @@ RuleCheckResult::RuleCheckResult(const RuleCheckResult& from)
 void RuleCheckResult::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_RuleCheckResult_RuleCheck_2eproto.base);
-  contractid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  task_result_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  error_info_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   status_ = false;
 }
 
@@ -1629,7 +486,8 @@ RuleCheckResult::~RuleCheckResult() {
 }
 
 void RuleCheckResult::SharedDtor() {
-  contractid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  task_result_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  error_info_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void RuleCheckResult::SetCachedSize(int size) const {
@@ -1647,8 +505,8 @@ void RuleCheckResult::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  errorinfo_.Clear();
-  contractid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  task_result_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  error_info_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   status_ = false;
   _internal_metadata_.Clear();
 }
@@ -1666,13 +524,35 @@ const char* RuleCheckResult::_InternalParse(const char* begin, const char* end, 
     ptr = ::google::protobuf::io::Parse32(ptr, &tag);
     GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
     switch (tag >> 3) {
-      // string contractid = 1;
+      // bool status = 1;
       case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
+        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
+        msg->set_status(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // bytes task_result = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
         ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("e2e_message.RuleCheckResult.contractid");
-        object = msg->mutable_contractid();
+        object = msg->mutable_task_result();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParser;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheck(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
+        break;
+      }
+      // string error_info = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        ctx->extra_parse_data().SetFieldName("e2e_message.RuleCheckResult.error_info");
+        object = msg->mutable_error_info();
         if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
           parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
           goto string_till_end;
@@ -1680,29 +560,6 @@ const char* RuleCheckResult::_InternalParse(const char* begin, const char* end, 
         GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
         ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
         ptr += size;
-        break;
-      }
-      // bool status = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
-        msg->set_status(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // repeated .e2e_message.ErrorInfo errorInfo = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
-        do {
-          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-          parser_till_end = ::e2e_message::ErrorInfo::_InternalParse;
-          object = msg->add_errorinfo();
-          if (size > end - ptr) goto len_delim_till_end;
-          ptr += size;
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
-              {parser_till_end, object}, ptr - size, ptr));
-          if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 26 && (ptr += 1));
         break;
       }
       default: {
@@ -1739,24 +596,9 @@ bool RuleCheckResult::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string contractid = 1;
+      // bool status = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_contractid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->contractid().data(), static_cast<int>(this->contractid().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "e2e_message.RuleCheckResult.contractid"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool status = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -1767,11 +609,26 @@ bool RuleCheckResult::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .e2e_message.ErrorInfo errorInfo = 3;
+      // bytes task_result = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_task_result()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string error_info = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_errorinfo()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_error_info()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->error_info().data(), static_cast<int>(this->error_info().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "e2e_message.RuleCheckResult.error_info"));
         } else {
           goto handle_unusual;
         }
@@ -1805,28 +662,25 @@ void RuleCheckResult::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string contractid = 1;
-  if (this->contractid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->contractid().data(), static_cast<int>(this->contractid().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleCheckResult.contractid");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->contractid(), output);
-  }
-
-  // bool status = 2;
+  // bool status = 1;
   if (this->status() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->status(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->status(), output);
   }
 
-  // repeated .e2e_message.ErrorInfo errorInfo = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->errorinfo_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3,
-      this->errorinfo(static_cast<int>(i)),
-      output);
+  // bytes task_result = 2;
+  if (this->task_result().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      2, this->task_result(), output);
+  }
+
+  // string error_info = 3;
+  if (this->error_info().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->error_info().data(), static_cast<int>(this->error_info().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "e2e_message.RuleCheckResult.error_info");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->error_info(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1842,28 +696,27 @@ void RuleCheckResult::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string contractid = 1;
-  if (this->contractid().size() > 0) {
+  // bool status = 1;
+  if (this->status() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->status(), target);
+  }
+
+  // bytes task_result = 2;
+  if (this->task_result().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        2, this->task_result(), target);
+  }
+
+  // string error_info = 3;
+  if (this->error_info().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->contractid().data(), static_cast<int>(this->contractid().length()),
+      this->error_info().data(), static_cast<int>(this->error_info().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "e2e_message.RuleCheckResult.contractid");
+      "e2e_message.RuleCheckResult.error_info");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->contractid(), target);
-  }
-
-  // bool status = 2;
-  if (this->status() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->status(), target);
-  }
-
-  // repeated .e2e_message.ErrorInfo errorInfo = 3;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->errorinfo_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        3, this->errorinfo(static_cast<int>(i)), target);
+        3, this->error_info(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1887,25 +740,21 @@ size_t RuleCheckResult::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .e2e_message.ErrorInfo errorInfo = 3;
-  {
-    unsigned int count = static_cast<unsigned int>(this->errorinfo_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->errorinfo(static_cast<int>(i)));
-    }
+  // bytes task_result = 2;
+  if (this->task_result().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->task_result());
   }
 
-  // string contractid = 1;
-  if (this->contractid().size() > 0) {
+  // string error_info = 3;
+  if (this->error_info().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->contractid());
+        this->error_info());
   }
 
-  // bool status = 2;
+  // bool status = 1;
   if (this->status() != 0) {
     total_size += 1 + 1;
   }
@@ -1937,10 +786,13 @@ void RuleCheckResult::MergeFrom(const RuleCheckResult& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  errorinfo_.MergeFrom(from.errorinfo_);
-  if (from.contractid().size() > 0) {
+  if (from.task_result().size() > 0) {
 
-    contractid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.contractid_);
+    task_result_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.task_result_);
+  }
+  if (from.error_info().size() > 0) {
+
+    error_info_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.error_info_);
   }
   if (from.status() != 0) {
     set_status(from.status());
@@ -1972,8 +824,9 @@ void RuleCheckResult::Swap(RuleCheckResult* other) {
 void RuleCheckResult::InternalSwap(RuleCheckResult* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  CastToBase(&errorinfo_)->InternalSwap(CastToBase(&other->errorinfo_));
-  contractid_.Swap(&other->contractid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  task_result_.Swap(&other->task_result_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  error_info_.Swap(&other->error_info_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(status_, other->status_);
 }
@@ -1987,14 +840,23 @@ void RuleCheckResult::InternalSwap(RuleCheckResult* other) {
 // ===================================================================
 
 void RuleCheckResponse::InitAsDefaultInstance() {
+  ::e2e_message::_RuleCheckResponse_default_instance_._instance.get_mutable()->result_ = const_cast< ::e2e_message::RuleCheckResult*>(
+      ::e2e_message::RuleCheckResult::internal_default_instance());
 }
 class RuleCheckResponse::HasBitSetters {
  public:
+  static const ::e2e_message::RuleCheckResult& result(const RuleCheckResponse* msg);
 };
 
+const ::e2e_message::RuleCheckResult&
+RuleCheckResponse::HasBitSetters::result(const RuleCheckResponse* msg) {
+  return *msg->result_;
+}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int RuleCheckResponse::kStatusFieldNumber;
-const int RuleCheckResponse::kResultsFieldNumber;
+const int RuleCheckResponse::kTaskhashFieldNumber;
+const int RuleCheckResponse::kResultFieldNumber;
+const int RuleCheckResponse::kRuleFileHashFieldNumber;
+const int RuleCheckResponse::kSignatureFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 RuleCheckResponse::RuleCheckResponse()
@@ -2004,17 +866,35 @@ RuleCheckResponse::RuleCheckResponse()
 }
 RuleCheckResponse::RuleCheckResponse(const RuleCheckResponse& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr),
-      results_(from.results_) {
+      _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  status_ = from.status_;
+  taskhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.taskhash().size() > 0) {
+    taskhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.taskhash_);
+  }
+  rule_file_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.rule_file_hash().size() > 0) {
+    rule_file_hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rule_file_hash_);
+  }
+  signature_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.signature().size() > 0) {
+    signature_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.signature_);
+  }
+  if (from.has_result()) {
+    result_ = new ::e2e_message::RuleCheckResult(*from.result_);
+  } else {
+    result_ = nullptr;
+  }
   // @@protoc_insertion_point(copy_constructor:e2e_message.RuleCheckResponse)
 }
 
 void RuleCheckResponse::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_RuleCheckResponse_RuleCheck_2eproto.base);
-  status_ = false;
+  taskhash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rule_file_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  signature_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  result_ = nullptr;
 }
 
 RuleCheckResponse::~RuleCheckResponse() {
@@ -2023,6 +903,10 @@ RuleCheckResponse::~RuleCheckResponse() {
 }
 
 void RuleCheckResponse::SharedDtor() {
+  taskhash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rule_file_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  signature_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete result_;
 }
 
 void RuleCheckResponse::SetCachedSize(int size) const {
@@ -2040,8 +924,13 @@ void RuleCheckResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  results_.Clear();
-  status_ = false;
+  taskhash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rule_file_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  signature_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == nullptr && result_ != nullptr) {
+    delete result_;
+  }
+  result_ = nullptr;
   _internal_metadata_.Clear();
 }
 
@@ -2058,27 +947,62 @@ const char* RuleCheckResponse::_InternalParse(const char* begin, const char* end
     ptr = ::google::protobuf::io::Parse32(ptr, &tag);
     GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
     switch (tag >> 3) {
-      // bool status = 1;
+      // bytes taskhash = 1;
       case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
-        msg->set_status(::google::protobuf::internal::ReadVarint(&ptr));
+        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        object = msg->mutable_taskhash();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParser;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheck(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
         break;
       }
-      // repeated .e2e_message.RuleCheckResult results = 2;
+      // .e2e_message.RuleCheckResult result = 2;
       case 2: {
         if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
-        do {
-          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-          parser_till_end = ::e2e_message::RuleCheckResult::_InternalParse;
-          object = msg->add_results();
-          if (size > end - ptr) goto len_delim_till_end;
-          ptr += size;
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
-              {parser_till_end, object}, ptr - size, ptr));
-          if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 18 && (ptr += 1));
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        parser_till_end = ::e2e_message::RuleCheckResult::_InternalParse;
+        object = msg->mutable_result();
+        if (size > end - ptr) goto len_delim_till_end;
+        ptr += size;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
+            {parser_till_end, object}, ptr - size, ptr));
+        break;
+      }
+      // bytes rule_file_hash = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        object = msg->mutable_rule_file_hash();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParser;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheck(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
+        break;
+      }
+      // bytes signature = 4;
+      case 4: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 34) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        object = msg->mutable_signature();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParser;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheck(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
         break;
       }
       default: {
@@ -2096,6 +1020,10 @@ const char* RuleCheckResponse::_InternalParse(const char* begin, const char* end
     }  // switch
   }  // while
   return ptr;
+string_till_end:
+  static_cast<::std::string*>(object)->clear();
+  static_cast<::std::string*>(object)->reserve(size);
+  goto len_delim_till_end;
 len_delim_till_end:
   return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
                                {parser_till_end, object}, size);
@@ -2111,24 +1039,44 @@ bool RuleCheckResponse::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bool status = 1;
+      // bytes taskhash = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &status_)));
+        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_taskhash()));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .e2e_message.RuleCheckResult results = 2;
+      // .e2e_message.RuleCheckResult result = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_results()));
+               input, mutable_result()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes rule_file_hash = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_rule_file_hash()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes signature = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (34 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_signature()));
         } else {
           goto handle_unusual;
         }
@@ -2162,18 +1110,28 @@ void RuleCheckResponse::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool status = 1;
-  if (this->status() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->status(), output);
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      1, this->taskhash(), output);
   }
 
-  // repeated .e2e_message.RuleCheckResult results = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->results_size()); i < n; i++) {
+  // .e2e_message.RuleCheckResult result = 2;
+  if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2,
-      this->results(static_cast<int>(i)),
-      output);
+      2, HasBitSetters::result(this), output);
+  }
+
+  // bytes rule_file_hash = 3;
+  if (this->rule_file_hash().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->rule_file_hash(), output);
+  }
+
+  // bytes signature = 4;
+  if (this->signature().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      4, this->signature(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -2189,17 +1147,32 @@ void RuleCheckResponse::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool status = 1;
-  if (this->status() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->status(), target);
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        1, this->taskhash(), target);
   }
 
-  // repeated .e2e_message.RuleCheckResult results = 2;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->results_size()); i < n; i++) {
+  // .e2e_message.RuleCheckResult result = 2;
+  if (this->has_result()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, this->results(static_cast<int>(i)), target);
+        2, HasBitSetters::result(this), target);
+  }
+
+  // bytes rule_file_hash = 3;
+  if (this->rule_file_hash().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->rule_file_hash(), target);
+  }
+
+  // bytes signature = 4;
+  if (this->signature().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        4, this->signature(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -2223,20 +1196,32 @@ size_t RuleCheckResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .e2e_message.RuleCheckResult results = 2;
-  {
-    unsigned int count = static_cast<unsigned int>(this->results_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->results(static_cast<int>(i)));
-    }
+  // bytes taskhash = 1;
+  if (this->taskhash().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->taskhash());
   }
 
-  // bool status = 1;
-  if (this->status() != 0) {
-    total_size += 1 + 1;
+  // bytes rule_file_hash = 3;
+  if (this->rule_file_hash().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->rule_file_hash());
+  }
+
+  // bytes signature = 4;
+  if (this->signature().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->signature());
+  }
+
+  // .e2e_message.RuleCheckResult result = 2;
+  if (this->has_result()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *result_);
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2266,9 +1251,20 @@ void RuleCheckResponse::MergeFrom(const RuleCheckResponse& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  results_.MergeFrom(from.results_);
-  if (from.status() != 0) {
-    set_status(from.status());
+  if (from.taskhash().size() > 0) {
+
+    taskhash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.taskhash_);
+  }
+  if (from.rule_file_hash().size() > 0) {
+
+    rule_file_hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rule_file_hash_);
+  }
+  if (from.signature().size() > 0) {
+
+    signature_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.signature_);
+  }
+  if (from.has_result()) {
+    mutable_result()->::e2e_message::RuleCheckResult::MergeFrom(from.result());
   }
 }
 
@@ -2297,8 +1293,13 @@ void RuleCheckResponse::Swap(RuleCheckResponse* other) {
 void RuleCheckResponse::InternalSwap(RuleCheckResponse* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  CastToBase(&results_)->InternalSwap(CastToBase(&other->results_));
-  swap(status_, other->status_);
+  taskhash_.Swap(&other->taskhash_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  rule_file_hash_.Swap(&other->rule_file_hash_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  signature_.Swap(&other->signature_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(result_, other->result_);
 }
 
 ::google::protobuf::Metadata RuleCheckResponse::GetMetadata() const {
@@ -2311,14 +1312,8 @@ void RuleCheckResponse::InternalSwap(RuleCheckResponse* other) {
 }  // namespace e2e_message
 namespace google {
 namespace protobuf {
-template<> PROTOBUF_NOINLINE ::e2e_message::RuleItem* Arena::CreateMaybeMessage< ::e2e_message::RuleItem >(Arena* arena) {
-  return Arena::CreateInternal< ::e2e_message::RuleItem >(arena);
-}
 template<> PROTOBUF_NOINLINE ::e2e_message::RuleCheckRequest* Arena::CreateMaybeMessage< ::e2e_message::RuleCheckRequest >(Arena* arena) {
   return Arena::CreateInternal< ::e2e_message::RuleCheckRequest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::e2e_message::ErrorInfo* Arena::CreateMaybeMessage< ::e2e_message::ErrorInfo >(Arena* arena) {
-  return Arena::CreateInternal< ::e2e_message::ErrorInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::e2e_message::RuleCheckResult* Arena::CreateMaybeMessage< ::e2e_message::RuleCheckResult >(Arena* arena) {
   return Arena::CreateInternal< ::e2e_message::RuleCheckResult >(arena);

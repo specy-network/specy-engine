@@ -44,11 +44,11 @@ void TxContext::checkRules() {
     e2eRuleCheckRequest.set_allocated_rule_check_input(&request);
 
     string rulecheckString = e2eRuleCheckRequest.SerializeAsString();
-    string rulecheckResponseString;
 
     BINDING_INFO_STRING(rulecheckString);
 
     BINDING_INFO("BindingEnclave: send rule check e2e request");
+    string rulecheckResponseString;
     RequestResponseUtil::E2ERequestResponse(this->bindingEnclaveId, this->ruleEnclaveId,
                                         uint32_t(ExportedRuleFunction::kCheckRule),
                                         ENCLAVE_TO_ENCLAVE_CALL,
@@ -107,8 +107,20 @@ string TxContext::getSignature(const char* data) {
 
 // generate Proof Response
 void TxContext::generateTaskResponse() {
+    taskResponse->set_taskhash(taskRequest->taskhash());
+    request_proto::Result* result = new request_proto::Result();
 
+    const e2e_message::RuleCheckResult& rule_check_result = ruleCheckResponse->result();
 
+    result->set_status(rule_check_result.status());
+    result->set_error_info(rule_check_result.error_info());
+    result->set_task_result(rule_check_result.task_result());
+
+    taskResponse->set_allocated_result(result);
+    string response_string = taskResponse->SerializeAsString();
+    string response_signature = getSignature(response_string.c_str());
+
+    taskResponse->set_signature(response_signature);
 }
 
 void TxContext::serializeTaskResponse(char* output, size_t size) {

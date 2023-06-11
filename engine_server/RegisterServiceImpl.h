@@ -21,6 +21,6 @@ class RegisterServiceImpl final : public request_proto::Register::Service
 
         KEYMANAGEMENT_ERROR_CODE StartRemoteAttestationCosmos(request_proto::EngineInfoResponse *const register_resp);
     
-    // public:
-    //     RegisterServiceImpl(sgx_enclave_id_t id) : eid(id) {}
+    public:
+        RegisterServiceImpl(sgx_enclave_id_t id) : eid(id) {}
 };

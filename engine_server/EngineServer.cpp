@@ -44,15 +44,15 @@ uint32_t EngineServer::ReadConfig() {
 uint32_t EngineServer::RunServer()
 {
     ReadConfig();
-    RegulatorServiceImpl regulatorService;
-    RegisterServiceImpl registerService;
+    RegulatorServiceImpl regulatorService(bindingEnclaveID);
+    RegisterServiceImpl registerService(keyManagementEnclaveID);
 
     grpc::EnableDefaultHealthCheckService(true);
     grpc::reflection::InitProtoReflectionServerBuilderPlugin();
     grpc::ServerBuilder builder;
 
     // Listen on the given address without any authentication mechanism.
-    builder.AddListeningPort(this->address, grpc::InsecureServerCredentials());
+    builder.AddListeningPort(address, grpc::InsecureServerCredentials());
     // Register "service" as the instance through which we'll communicate with
     // clients. In this case it corresponds to an *synchronous* service.
     builder.RegisterService(&regulatorService);
@@ -61,11 +61,11 @@ uint32_t EngineServer::RunServer()
 
     // Finally assemble the server.
     this->server = move(builder.BuildAndStart());
-    SPDLOG_INFO("Server listening on {}", this->address);
+    SPDLOG_INFO("Server listening on {}", address);
 
     // Wait for the server to shutdown. Note that some other thread must be
     // responsible for shutting down the server for this call to ever return.
-    this->server->Wait();
+    server->Wait();
     return 0;
 }
 

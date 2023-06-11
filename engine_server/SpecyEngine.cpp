@@ -107,8 +107,7 @@ uint32_t SpecyEngine::StartLocalAttesttion()
 uint32_t SpecyEngine::LaunchGRPCServer()
 {
 
-    // start grpc server
-    // RegulatorServer server;
+    server.RegisteEnclaveID(g_key_management_enclave_id, g_binding_enclave_id);
     if (REQUESTPROCESSOR_ERROR_CODE::kRPSUCCESS != server.RunServer())
     {
         return uint32_t(EngineStatus::kGRPCServerError);

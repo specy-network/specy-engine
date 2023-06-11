@@ -22,7 +22,7 @@ class  RegulatorServiceImpl final : public request_proto::Regulator::Service
 
     REQUESTPROCESSOR_ERROR_CODE ProofRequestProcess(const request_proto::TaskRequest& request, request_proto::TaskResponse* response);
     
-    // public:
-    //     RegulatorServiceImpl(sgx_enclave_id_t g_binding_enclave_id) : eid(g_binding_enclave_id) {}
+    public:
+        RegulatorServiceImpl(sgx_enclave_id_t g_binding_enclave_id) : eid(g_binding_enclave_id) {}
 
 };

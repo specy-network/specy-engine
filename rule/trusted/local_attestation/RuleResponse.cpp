@@ -134,7 +134,6 @@ RuleEnclaveStatus fill_rule_check_response(
     // init rule check response
     RuleCheckResult* rule_result = new RuleCheckResult();
     rule_result->set_status(false);
-    // rule_result->set_status(true);
 
     // check rule and fill response
     RULE_INFO_STRING("Rule Enclave: start query rule items");

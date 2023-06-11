@@ -7,6 +7,8 @@
 
 #include "RequestContext.h"
 
+#include "sgx_tcrypto.h"
+
 using namespace std;
 using namespace json11;
 
@@ -15,6 +17,7 @@ RequestContext::RequestContext(const string &req_id, const string &rule_text) {
     this->req_id_ = req_id;
     this->rule_text_ = rule_text;
     split();
+    sgx_sha256_msg((unsigned char*)rule_text.c_str(), rule_text.length(), &rule_file_hash);
 }
 
 RequestContext::RequestContext(const std::string &contract_id,

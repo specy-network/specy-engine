@@ -13,8 +13,8 @@ const string QueryBuilder::QUERY_ATTRIBUTES_SUBFIX = R"-(})-";
 
 // for now, it is a particular function for rule
 string QueryBuilder::GenerateQueryString(const EntityRule& entity) {
-    string rule_query_string_prefix(R"-({"query":"{rules(where:{name:\")-");
-    string rule_query_string_subfix(R"-(\"}){content \n }}"})-");
+    string rule_query_string_prefix(R"-({"query":"{tasks(where:{hash:\")-");
+    string rule_query_string_subfix(R"-(\"}){rule_file \n }}"})-");
     return rule_query_string_prefix + entity.get_name() +
            rule_query_string_subfix;
 }

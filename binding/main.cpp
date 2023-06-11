@@ -1,6 +1,5 @@
 #include <BindingQuery.h>
 #include <BindingEnclave_u.h>
-#include <ProofRequest.pb.h>
 // #include <BindingResolver.h>
 #include <Transform.h>
 #include "sgx_urts.h"

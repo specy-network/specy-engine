@@ -7,6 +7,14 @@
 
 #include "RuleProcessor.h"
 
+
+#include <regex>
+#include <vector>
+#include <set>
+#include "merklecpp.h"
+#include "sgx_tcrypto.h"
+// #include "openssl/sha.h"
+
 using namespace std;
 using namespace json11;
 using namespace antlr4;
@@ -73,107 +81,82 @@ static void dumpEntitySetList(vector<EntitySet>& entity_set_list) {
     }
 }
 
+static inline void sha256_sgx(
+    const merkle::HashT<32>& l,
+    const merkle::HashT<32>& r,
+    merkle::HashT<32>& out)
+{
+    uint8_t block[32 * 2];
+    memcpy(&block[0], l.bytes, 32);
+    memcpy(&block[32], r.bytes, 32);
+    sgx_sha256_msg(block, sizeof(block), &out.bytes);
+}
+
+void GenerateQuerySentences (const string& rule_text, vector<string>& sentences) {
+    sentences.push_back(R"-({"query" : "{interchainnftreceives(where : {timestamp_gt:1672502400}) { receiver }}")-");
+    sentences.push_back(R"-({"query" : "{rewardlists { list }}")-");
+}
+
 // EvaluateRule is used to regulate transaction with rules
 RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_context)
 {
     ocall_print_string("enter EvaluateRule", __FILE__, __LINE__);
 
     RuleEnclaveStatus status_code = RuleEnclaveStatus::kOK;
+    const string& rule_text = request_context->get_rule_text();
+    vector<string> sentences;
 
-    // handlers for use in rule evaluation:
-    // retrieve referenced entities and entity_sets
-    EntityCollector entity_collector = EntityCollector(request_context); // rule language visitor
-    ocall_print_string("parse rule text", __FILE__, __LINE__);
+    // generate query sentence
+    GenerateQuerySentences(rule_text, sentences);
 
-    // build a parse tree from requested rule text
-    ANTLRInputStream input(request_context->get_rule_text());
-    RuleLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
-    // print out lexer parsed tokens
-    tokens.fill();
-    uint64_t counter = 0;
+    // get query result
+    DataProvider provider;
+    Json query_nft_result;
+    provider.QueryDataFromGraphnodeJson(sentences[0], "ics721", query_nft_result);
+    ocall_print_string(("entity binding" + query_nft_result.dump()).c_str(), __FILE__, __LINE__);
 
-    ocall_print_string("traverse tokens", __FILE__, __LINE__);
-    for (const auto &token : tokens.getTokens())
-    {
-        ocall_print_string((string("token at pos ") +
-                            to_string(counter++) +
-                            string(": ") + token->toString()).c_str(), __FILE__, __LINE__);
-    }
-    ocall_print_string("parse rule tree", __FILE__, __LINE__);
-    RuleParser parser(&tokens);
-    ocall_print_string("get tree root", __FILE__, __LINE__);
-    // every rule starts with a "root" node
-    auto *tree = parser.root();
+    Json query_list_result;
+    provider.QueryDataFromGraphnodeJson(sentences[1], "rewards", query_list_result);
+    ocall_print_string(("entity binding" + query_list_result.dump()).c_str(), __FILE__, __LINE__);
+    // check rule
 
-    // ocall_print_string("collect entity and entity set list");
-    // visit parse tree to retrieve referenced entities and entity_sets
-    tree->accept(&entity_collector);
-
-    // get and dump entity list for Debug
-    auto entity_list = entity_collector.get_entity_list();
-    dumpEntityList(entity_list);
-
-    // get and dump entity set list for Debug
-    auto entity_set_list = entity_collector.get_entity_set_list();
-    dumpEntitySetList(entity_set_list);
-
-    ocall_print_string("request entity binding", __FILE__, __LINE__);
-
-    // ask binding module for data binding (for both entities and entity sets)
-    // for entity data binding
-    for (auto entity : entity_list)
-    {
-        ocall_print_string(("request entity: " + entity.dump()).c_str(), __FILE__, __LINE__);
-        ocall_print_string(("request id is : " + request_context->get_req_id()).c_str(), __FILE__, __LINE__);
-
-        QueryBuilder builder;
-        string query_string = builder.GenerateQueryString(entity, request_context);
-
-        DataProvider provider;
-        Json query_result;
-        provider.QueryDataFromGraphnodeJson(query_string, request_context->contract_id, query_result);
-        ocall_print_string(("entity binding" + query_result.dump()).c_str(), __FILE__, __LINE__);
-
-        Json binding_result;
-        provider.ParseEntityOutputJSON(query_result, &binding_result);
-
-        ocall_print_string(("EvaluateRule: requested entity: " + binding_result.dump()).c_str(), __FILE__, __LINE__);
-        request_context->set_entity_binding(entity.get_id(), binding_result);
-        // TODO Decide on lifespan of binding, whether it can last longer
+    set<string> rewardNFTList;
+    auto queryList = query_list_result["data"]["list"];
+    for (auto item : queryList.array_items()) {
+        rewardNFTList.insert(item.string_value());
     }
 
-    ocall_print_string("request entity set binding", __FILE__, __LINE__);
-    // for entity set data binding
-    for (auto entity_set : entity_set_list)
-    {
-        ocall_print_string(("request entity set: " + entity_set.dump()).c_str(), __FILE__, __LINE__);
-
-        QueryBuilder builder;
-        string query_string = builder.GenerateQueryString(entity_set, request_context);
-        ocall_print_string(("query string is: " + query_string).c_str(), __FILE__, __LINE__);
-
-        DataProvider provider;
-        Json query_result;
-        provider.QueryDataFromGraphnodeJson(query_string, request_context->contract_id, query_result);
-        ocall_print_string(("entity set query result" + query_result.dump()).c_str(), __FILE__, __LINE__);
-
-        Json binding_result;
-        provider.ParseEntitySetOutputJSON(query_result, &binding_result);
-
-        ocall_print_string(("EvaluateRule: requested entity set: " + binding_result.dump()).c_str(), __FILE__, __LINE__);
-        request_context->set_entity_set_binding(entity_set.get_id(), binding_result);
+    vector<string> rewardUserLists;
+    auto queryNFTs = query_nft_result["data"]["interchainnftreceives"];
+    ocall_print_string(queryNFTs.dump().c_str(), __FILE__, __LINE__);
+    for (auto NFT : queryNFTs.array_items()) {
+        ocall_print_string(NFT.dump().c_str(), __FILE__, __LINE__);
+        if (rewardNFTList.find(NFT["class_id"].string_value()) != rewardNFTList.end()) {
+            rewardUserLists.push_back(NFT["receiver"].string_value());
+        }
     }
 
-    ocall_print_string("evalute rule with entity and entity set binding", __FILE__, __LINE__);
+    for (auto s : rewardNFTList) {
+        ocall_print_string(s.c_str(), __FILE__, __LINE__);
+    }
 
-    // visit parse tree to evaluate rule and decide on result
-    // evaluation result is stored inside request context
-    RuleEvaluator rule_evaluator = RuleEvaluator(request_context);       // rule language visitor
-    tree->accept(&rule_evaluator);
+    merkle::TreeT<32, sha256_sgx> tree;
+
+    for (auto s : rewardUserLists) {
+        ocall_print_string(s.c_str(), __FILE__, __LINE__);
+        uint8_t hash[32];
+        sgx_sha256_msg((unsigned char*)s.c_str(), s.length(), &hash);
+        merkle::HashT<32> merkleNode(hash);
+        ocall_print_string(merkleNode.to_string().c_str(), __FILE__, __LINE__);
+        tree.insert(merkleNode);
+    }
+
+    auto root = tree.root();
+    ocall_print_string(root.to_string().c_str(), __FILE__, __LINE__);
+
+    memcpy(&request_context->result_bytes, root.bytes, 32);
 
     // TODO build rule check result
-
     ocall_print_string("exit EvaluateRule", __FILE__, __LINE__);
     return RuleEnclaveStatus::kOK;
 }

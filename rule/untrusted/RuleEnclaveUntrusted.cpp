@@ -29,7 +29,7 @@ extern "C"
         outter["message"] = Json("SUCCESS");
         outter["type"] = Json("entity");
         outter["result"] = queryResult;
-        string content = Json(outter).dump();
+        string content = queryResult.dump();
         memcpy(query_result, content.c_str(), content.length()+1);
         return;
     }

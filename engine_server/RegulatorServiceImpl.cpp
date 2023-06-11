@@ -32,9 +32,9 @@ REQUESTPROCESSOR_ERROR_CODE RegulatorServiceImpl::ProofRequestProcess(
     BINDING_ERROR_CODE errorCode;
     char* responseBuffer = (char*) malloc(kMaxOutSize);
 #ifdef USE_ENCLAVE_PREFIX
-    BindingEnclave_ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), kMaxOutSize, responseBuffer, kMaxOutSize);
+    BindingEnclave_ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), requestEncodedString.length(), responseBuffer, kMaxOutSize);
 #else
-    ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), kMaxOutSize, responseBuffer, kMaxOutSize);
+    ecall_process_proof_request(this->eid, &errorCode, requestEncodedString.c_str(), requestEncodedString.length(), responseBuffer, kMaxOutSize);
 #endif
     SPDLOG_INFO("return to untrsted zoom");
     string responseString = DecodeFromCharToString(responseBuffer);

@@ -1896,7 +1896,7 @@ namespace merkle
 
     SHA256_CTX ctx;
     if (SHA256_Init(&ctx) != 1)
-      printf("SHA256_Init error");
+      ocall_print_string("SHA256_Init error", __FILE__, __LINE__);
     SHA256_Transform(&ctx, &block[0]);
 
     for (int i = 0; i < 8; i++)

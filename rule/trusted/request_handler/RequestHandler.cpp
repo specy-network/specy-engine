@@ -27,14 +27,11 @@ static void dumpRuleidList(const vector<string> &rule_id_list) {
 
 // CheckRule is used to assemble RequestContext object by given params
 RuleEnclaveStatus RequestHandler::CheckRule(const string &req_id, const string &rule_text,
-                                            vector<bool> *const status_list)
+                                            vector<bool> *const status_list,
+                                            RequestContext* request_context)
 {
     ocall_print_string((string("enter CheckRule with request id: ") + req_id).c_str(), __FILE__, __LINE__);
     ocall_print_string((string("rule text:\n") + rule_text).c_str(), __FILE__, __LINE__);
-
-    // allocate a new request context pointer
-    // NOTE: `request_context` will be delted at RequestHandler destructor
-    auto request_context = new RequestContext(req_id, rule_text);
 
     // employ rule processor to evaluate rule
     RuleProcessor rule_processor;

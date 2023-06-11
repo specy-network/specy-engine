@@ -17,6 +17,8 @@ set(BUILD_INTEGRATED ON)
 # Indicate we are buiding rule check module now (which employs local attestation code)
 add_definitions(-DBUILD_RULE_CHECK_MODULE)
 
+# add_definitions(-DHAVE_OPENSSL)
+
 # Indicate to compile this module with protocol buffer header version 3.7
 add_definitions(-DBUILD_WITH_PROTOCOL_BUFFER_3_7)
 
@@ -32,6 +34,7 @@ endif()
 # Refer to https://github.com/xzhangxa/SGX-CMake
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake)
 find_package(SGX REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 # Use C++ 11 in Enclave
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -144,8 +147,14 @@ else()
                         LDSCRIPT ${LDS})
 endif()
 
+target_link_libraries(rule_enclave
+                    /opt/intel/sgxssl/lib64/libsgx_tsgxssl.a 
+                    /opt/intel/sgxssl/lib64/libsgx_tsgxssl_crypto.a
+                    /opt/intel/sgxssl/lib64/libsgx_usgxssl.a)
+
 # Path for finding local attestation header files (needed in SGX proxy/bridge compilation)
 include_directories(.
+                    /opt/intel/sgxssl/include
                     ../third_party/antlr4_runtime_trusted
                     ../third_party/protobuf/trusted_protobuf_src
                     ../third_party/merklecpp

@@ -40,5 +40,6 @@ public:
     // Return: status_list: result list 
     //         RuleEnclaveStatus: status of CheckRule
     RuleEnclaveStatus CheckRule(const std::string &req_id, const std::string &rule_text,
-                                std::vector<bool> *const status_list);
+                                std::vector<bool> *const status_list,
+                                RequestContext* request_context);
 };

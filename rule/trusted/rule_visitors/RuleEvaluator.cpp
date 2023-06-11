@@ -6,6 +6,7 @@
 // This file implements RuleEvaluator class.
 
 #include "RuleEvaluator.h"
+#include "merklecpp.h"
 
 using namespace std;
 using namespace antlr4;

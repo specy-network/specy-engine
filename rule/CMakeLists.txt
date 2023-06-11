@@ -148,6 +148,7 @@ endif()
 include_directories(.
                     ../third_party/antlr4_runtime_trusted
                     ../third_party/protobuf/trusted_protobuf_src
+                    ../third_party/merklecpp
                     ../protos/trusted
                     ../include
                     ../)

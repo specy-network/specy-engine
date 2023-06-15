@@ -20,9 +20,9 @@ extern "C"
                             char* query_result, size_t result_length)
     {
         string contract = request_contract;
-        string subgraph = "regchain-system-subgraph";
+        string subgraph = "specy";
         if (contract != ""){
-            subgraph = "regchain-" + contract + "-subgraph";
+            subgraph = contract ;
         }
         Json queryResult = dataservice->query(query_request, subgraph.c_str());
         map<string, Json> outter;

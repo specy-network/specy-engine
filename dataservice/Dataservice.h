@@ -17,7 +17,7 @@ class Dataservice {
     std::string generateQueryTarget(const char* subgraph);
 
     public:
-        Dataservice(const char* host, const char* port, const char* target) : host(host), port(port), target(target), subgraph("regchain-system-subgraph") {}
+        Dataservice(const char* host, const char* port, const char* target) : host(host), port(port), target(target), subgraph("specy") {}
         
         Dataservice() {
             // for default, visit graph node from localhost:8000 and
@@ -25,7 +25,7 @@ class Dataservice {
             this->host = "localhost";
             this->port = "8000";
             this->target = "/subgraphs/name/";
-            this->subgraph = "regchain-system-subgraph";
+            this->subgraph = "specy";
         }
 
         json11::Json query(const char* querySentence, const char* subgraph);

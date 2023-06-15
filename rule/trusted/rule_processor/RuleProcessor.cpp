@@ -93,7 +93,7 @@ static inline void sha256_sgx(
 }
 
 void GenerateQuerySentences (const string& rule_text, vector<string>& sentences) {
-    sentences.push_back(R"-({"query" : "{interchainnftreceives(where : {timestamp_gt:1672502400}) { receiver }}"})-");
+    sentences.push_back(R"-({"query" : "{interchainnftreceives(where : {timestamp_gt:1672502400}) { receiver class_id }}"})-");
     sentences.push_back(R"-({"query" : "{rewardlists { list }}"})-");
 }
 
@@ -121,7 +121,8 @@ RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_cont
     // check rule
 
     set<string> rewardNFTList;
-    auto queryList = query_list_result["data"]["list"];
+    auto queryRewardList = query_list_result["data"]["rewardlists"];
+    auto queryList = queryRewardList.array_items()[0]["list"];
     for (auto item : queryList.array_items()) {
         rewardNFTList.insert(item.string_value());
     }

@@ -93,8 +93,8 @@ static inline void sha256_sgx(
 }
 
 void GenerateQuerySentences (const string& rule_text, vector<string>& sentences) {
-    sentences.push_back(R"-({"query" : "{interchainnftreceives(where : {timestamp_gt:1672502400}) { receiver }}")-");
-    sentences.push_back(R"-({"query" : "{rewardlists { list }}")-");
+    sentences.push_back(R"-({"query" : "{interchainnftreceives(where : {timestamp_gt:1672502400}) { receiver }}"})-");
+    sentences.push_back(R"-({"query" : "{rewardlists { list }}"})-");
 }
 
 // EvaluateRule is used to regulate transaction with rules

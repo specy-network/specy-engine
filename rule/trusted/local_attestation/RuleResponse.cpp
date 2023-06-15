@@ -68,16 +68,16 @@ string generate_request_id(const RuleCheckRequest& request_input) {
 
     // transfer txhash to hex string format
     const string& taskhash_raw = request_input.taskhash();
-    string tx_hash("0x");
-    string hex("0123456789abcdef");
+    // string tx_hash("0x");
+    // string hex("0123456789abcdef");
 
-    for (int i = 0; i < taskhash_raw.length(); i++) {
-        char c = taskhash_raw.at(i);
-        tx_hash.push_back(hex[(c & 0xf0) >> 4]);
-        tx_hash.push_back(hex[c & 0x0f]);
-    }
+    // for (int i = 0; i < taskhash_raw.length(); i++) {
+    //     char c = taskhash_raw.at(i);
+    //     tx_hash.push_back(hex[(c & 0xf0) >> 4]);
+    //     tx_hash.push_back(hex[c & 0x0f]);
+    // }
 
-    return tx_hash;
+    return taskhash_raw;
 }
 
 RuleEnclaveStatus get_rulefile_content(const string& request_id,

@@ -51,8 +51,8 @@ class RequestContext {
    public:
     std::string contract_id;
     std::string tx_hash;
-    uint8_t result_bytes[32];
-    uint8_t rule_file_hash[32];
+    std::string result_byte;
+    std::string rule_file_hash;
 
    public:
     // Constructor of RequestContext

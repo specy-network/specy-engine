@@ -114,10 +114,7 @@ void fill_rule_check_result(RuleCheckResult* rule_check_result,
         
         rule_check_result->set_status(status_list[i]);
         rule_check_result->set_error_info("");
-        char* result_bytes = new char(32);
-        memcpy(result_bytes, request_context->result_bytes, 32);
-        string* result = new string(result_bytes);
-        rule_check_result->set_allocated_task_result(result);
+        rule_check_result->set_task_result(request_context->result_byte);
     }
 }
 
@@ -170,10 +167,7 @@ RuleEnclaveStatus fill_rule_check_response(
     fill_rule_check_result(rule_result, status_list, request_context);
     response_output->set_allocated_result(rule_result);
     response_output->set_taskhash(request_input.taskhash());
-    char* hash_bytes = new char(32);
-    memcpy(hash_bytes, request_context->rule_file_hash, 32);
-    string* hash = new string(hash_bytes);
-    response_output->set_allocated_rule_file_hash(hash);
+    response_output->set_rule_file_hash(request_context->rule_file_hash);
     RULE_INFO_STRING(string("rule check response is: " +
                             response_output->SerializeAsString()));
     delete(request_context);

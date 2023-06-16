@@ -153,9 +153,13 @@ RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_cont
     }
 
     auto root = tree.root();
-    ocall_print_string(root.to_string().c_str(), __FILE__, __LINE__);
+    request_context->result_byte = root.to_string();
+    ocall_print_string(request_context->result_byte.c_str(), __FILE__, __LINE__);
 
-    memcpy(&request_context->result_bytes, root.bytes, 32);
+    uint8_t text_hash[32];
+    sgx_sha256_msg((unsigned char*)rule_text.c_str(), rule_text.length(), &text_hash);
+    merkle::HashT<32> text_hash_node(text_hash);
+    request_context->rule_file_hash = text_hash_node.to_string();
 
     // TODO build rule check result
     ocall_print_string("exit EvaluateRule", __FILE__, __LINE__);

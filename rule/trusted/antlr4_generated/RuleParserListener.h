@@ -17,8 +17,14 @@ public:
   virtual void enterRoot(RuleParser::RootContext *ctx) = 0;
   virtual void exitRoot(RuleParser::RootContext *ctx) = 0;
 
-  virtual void enterRegulationDecl(RuleParser::RegulationDeclContext *ctx) = 0;
-  virtual void exitRegulationDecl(RuleParser::RegulationDeclContext *ctx) = 0;
+  virtual void enterTaskDecl(RuleParser::TaskDeclContext *ctx) = 0;
+  virtual void exitTaskDecl(RuleParser::TaskDeclContext *ctx) = 0;
+
+  virtual void enterInputBlock(RuleParser::InputBlockContext *ctx) = 0;
+  virtual void exitInputBlock(RuleParser::InputBlockContext *ctx) = 0;
+
+  virtual void enterOutputBlock(RuleParser::OutputBlockContext *ctx) = 0;
+  virtual void exitOutputBlock(RuleParser::OutputBlockContext *ctx) = 0;
 
   virtual void enterEntitiesBlock(RuleParser::EntitiesBlockContext *ctx) = 0;
   virtual void exitEntitiesBlock(RuleParser::EntitiesBlockContext *ctx) = 0;
@@ -50,8 +56,20 @@ public:
   virtual void enterCompositeType(RuleParser::CompositeTypeContext *ctx) = 0;
   virtual void exitCompositeType(RuleParser::CompositeTypeContext *ctx) = 0;
 
-  virtual void enterSetType(RuleParser::SetTypeContext *ctx) = 0;
-  virtual void exitSetType(RuleParser::SetTypeContext *ctx) = 0;
+  virtual void enterListType(RuleParser::ListTypeContext *ctx) = 0;
+  virtual void exitListType(RuleParser::ListTypeContext *ctx) = 0;
+
+  virtual void enterExecutionBlock(RuleParser::ExecutionBlockContext *ctx) = 0;
+  virtual void exitExecutionBlock(RuleParser::ExecutionBlockContext *ctx) = 0;
+
+  virtual void enterExecutionStmt(RuleParser::ExecutionStmtContext *ctx) = 0;
+  virtual void exitExecutionStmt(RuleParser::ExecutionStmtContext *ctx) = 0;
+
+  virtual void enterExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *ctx) = 0;
+  virtual void exitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *ctx) = 0;
+
+  virtual void enterExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext *ctx) = 0;
+  virtual void exitExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext *ctx) = 0;
 
   virtual void enterRulesBlock(RuleParser::RulesBlockContext *ctx) = 0;
   virtual void exitRulesBlock(RuleParser::RulesBlockContext *ctx) = 0;
@@ -77,11 +95,11 @@ public:
   virtual void enterComplexStmt(RuleParser::ComplexStmtContext *ctx) = 0;
   virtual void exitComplexStmt(RuleParser::ComplexStmtContext *ctx) = 0;
 
-  virtual void enterSetStmt(RuleParser::SetStmtContext *ctx) = 0;
-  virtual void exitSetStmt(RuleParser::SetStmtContext *ctx) = 0;
+  virtual void enterListStmt(RuleParser::ListStmtContext *ctx) = 0;
+  virtual void exitListStmt(RuleParser::ListStmtContext *ctx) = 0;
 
-  virtual void enterSetExpr(RuleParser::SetExprContext *ctx) = 0;
-  virtual void exitSetExpr(RuleParser::SetExprContext *ctx) = 0;
+  virtual void enterListExpr(RuleParser::ListExprContext *ctx) = 0;
+  virtual void exitListExpr(RuleParser::ListExprContext *ctx) = 0;
 
   virtual void enterRelationStmt(RuleParser::RelationStmtContext *ctx) = 0;
   virtual void exitRelationStmt(RuleParser::RelationStmtContext *ctx) = 0;
@@ -101,11 +119,32 @@ public:
   virtual void enterBooleanExpr(RuleParser::BooleanExprContext *ctx) = 0;
   virtual void exitBooleanExpr(RuleParser::BooleanExprContext *ctx) = 0;
 
+  virtual void enterBooleanLiteral(RuleParser::BooleanLiteralContext *ctx) = 0;
+  virtual void exitBooleanLiteral(RuleParser::BooleanLiteralContext *ctx) = 0;
+
   virtual void enterLogicalStmt(RuleParser::LogicalStmtContext *ctx) = 0;
   virtual void exitLogicalStmt(RuleParser::LogicalStmtContext *ctx) = 0;
 
   virtual void enterLogicalExpr(RuleParser::LogicalExprContext *ctx) = 0;
   virtual void exitLogicalExpr(RuleParser::LogicalExprContext *ctx) = 0;
+
+  virtual void enterDefinitionStmt(RuleParser::DefinitionStmtContext *ctx) = 0;
+  virtual void exitDefinitionStmt(RuleParser::DefinitionStmtContext *ctx) = 0;
+
+  virtual void enterInstanceName(RuleParser::InstanceNameContext *ctx) = 0;
+  virtual void exitInstanceName(RuleParser::InstanceNameContext *ctx) = 0;
+
+  virtual void enterQueryExpr(RuleParser::QueryExprContext *ctx) = 0;
+  virtual void exitQueryExpr(RuleParser::QueryExprContext *ctx) = 0;
+
+  virtual void enterExpr(RuleParser::ExprContext *ctx) = 0;
+  virtual void exitExpr(RuleParser::ExprContext *ctx) = 0;
+
+  virtual void enterAssignStmt(RuleParser::AssignStmtContext *ctx) = 0;
+  virtual void exitAssignStmt(RuleParser::AssignStmtContext *ctx) = 0;
+
+  virtual void enterAssignExpr(RuleParser::AssignExprContext *ctx) = 0;
+  virtual void exitAssignExpr(RuleParser::AssignExprContext *ctx) = 0;
 
   virtual void enterIfStmt(RuleParser::IfStmtContext *ctx) = 0;
   virtual void exitIfStmt(RuleParser::IfStmtContext *ctx) = 0;

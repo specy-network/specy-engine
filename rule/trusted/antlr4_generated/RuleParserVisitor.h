@@ -21,7 +21,11 @@ public:
    */
     virtual antlrcpp::Any visitRoot(RuleParser::RootContext *context) = 0;
 
-    virtual antlrcpp::Any visitRegulationDecl(RuleParser::RegulationDeclContext *context) = 0;
+    virtual antlrcpp::Any visitTaskDecl(RuleParser::TaskDeclContext *context) = 0;
+
+    virtual antlrcpp::Any visitInputBlock(RuleParser::InputBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitOutputBlock(RuleParser::OutputBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitEntitiesBlock(RuleParser::EntitiesBlockContext *context) = 0;
 
@@ -43,7 +47,15 @@ public:
 
     virtual antlrcpp::Any visitCompositeType(RuleParser::CompositeTypeContext *context) = 0;
 
-    virtual antlrcpp::Any visitSetType(RuleParser::SetTypeContext *context) = 0;
+    virtual antlrcpp::Any visitListType(RuleParser::ListTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitExecutionBlock(RuleParser::ExecutionBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext *context) = 0;
 
     virtual antlrcpp::Any visitRulesBlock(RuleParser::RulesBlockContext *context) = 0;
 
@@ -61,9 +73,9 @@ public:
 
     virtual antlrcpp::Any visitComplexStmt(RuleParser::ComplexStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitSetStmt(RuleParser::SetStmtContext *context) = 0;
+    virtual antlrcpp::Any visitListStmt(RuleParser::ListStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitSetExpr(RuleParser::SetExprContext *context) = 0;
+    virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *context) = 0;
 
     virtual antlrcpp::Any visitRelationStmt(RuleParser::RelationStmtContext *context) = 0;
 
@@ -77,9 +89,23 @@ public:
 
     virtual antlrcpp::Any visitBooleanExpr(RuleParser::BooleanExprContext *context) = 0;
 
+    virtual antlrcpp::Any visitBooleanLiteral(RuleParser::BooleanLiteralContext *context) = 0;
+
     virtual antlrcpp::Any visitLogicalStmt(RuleParser::LogicalStmtContext *context) = 0;
 
     virtual antlrcpp::Any visitLogicalExpr(RuleParser::LogicalExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitDefinitionStmt(RuleParser::DefinitionStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitInstanceName(RuleParser::InstanceNameContext *context) = 0;
+
+    virtual antlrcpp::Any visitQueryExpr(RuleParser::QueryExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitExpr(RuleParser::ExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitAssignStmt(RuleParser::AssignStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitAssignExpr(RuleParser::AssignExprContext *context) = 0;
 
     virtual antlrcpp::Any visitIfStmt(RuleParser::IfStmtContext *context) = 0;
 

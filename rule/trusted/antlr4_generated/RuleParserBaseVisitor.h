@@ -19,7 +19,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitRegulationDecl(RuleParser::RegulationDeclContext *ctx) override {
+  virtual antlrcpp::Any visitTaskDecl(RuleParser::TaskDeclContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInputBlock(RuleParser::InputBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOutputBlock(RuleParser::OutputBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -63,7 +71,23 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSetType(RuleParser::SetTypeContext *ctx) override {
+  virtual antlrcpp::Any visitListType(RuleParser::ListTypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecutionBlock(RuleParser::ExecutionBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -99,11 +123,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSetStmt(RuleParser::SetStmtContext *ctx) override {
+  virtual antlrcpp::Any visitListStmt(RuleParser::ListStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSetExpr(RuleParser::SetExprContext *ctx) override {
+  virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -131,11 +155,39 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitBooleanLiteral(RuleParser::BooleanLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitLogicalStmt(RuleParser::LogicalStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual antlrcpp::Any visitLogicalExpr(RuleParser::LogicalExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDefinitionStmt(RuleParser::DefinitionStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInstanceName(RuleParser::InstanceNameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitQueryExpr(RuleParser::QueryExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExpr(RuleParser::ExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAssignStmt(RuleParser::AssignStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAssignExpr(RuleParser::AssignExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -20,7 +20,7 @@
 #include "trusted/data_provider/DataProvider.h"
 #include "trusted/data_types/RequestContext.h"
 #include "trusted/rule_visitors/EntityCollector.h"
-#include "trusted/rule_visitors/RuleEvaluator.h"
+// #include "trusted/rule_visitors/RuleEvaluator.h"
 
 // TODO Add thread-safe support
 

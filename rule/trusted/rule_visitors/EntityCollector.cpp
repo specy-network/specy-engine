@@ -343,13 +343,13 @@ void EntityCollector::GetNewWhereConstraint(RuleParser::BooleanExprContext *cons
     }
 }
 
-void EntityCollector::GetNewWhereConstraint(RuleParser::SetExprContext *context,
+void EntityCollector::GetNewWhereConstraint(RuleParser::ListExprContext *context,
                                             Constraint *const constraint)
 {
     // decide on different alternatives
     if (context->L_PAREN())
     {
-        this->GetNewWhereConstraint(context->setExpr(), constraint);
+        this->GetNewWhereConstraint(context->listExpr(), constraint);
     }
     else
     {
@@ -362,7 +362,7 @@ void EntityCollector::GetNewWhereConstraint(RuleParser::SetExprContext *context,
 
         // right entity, i.e., set entity
         // retrieve set's element from previous definition
-        string set_entity_name = context->entityName()->getText();
+        string set_entity_name = context->IDENTIFIER()->getText();
         string set_element_name = this->get_set_element_name(set_entity_name);
 
         ocall_print_string(("GetNewWhereConstraint: " + set_entity_name +
@@ -457,31 +457,12 @@ antlrcpp::Any EntityCollector::visitEntityDecl(RuleParser::EntityDeclContext *co
     ocall_print_string(("enter visitEntityDecl: " + context->getText()).c_str(), __FILE__, __LINE__);
 
     // check if we encounter a set entity declaration
-    if (context->IS())
-    {
-        string set_name = context->entityName()->getText();
-
-        auto composite_type_annotation = context->compositeType();
-        auto set_type_annotation = composite_type_annotation->setType();
-
-        // decide on set element type annotation
-        if (set_type_annotation->IDENTIFIER())
-        {
-            // store new set declaration for later rule parsing use
-            this->KeepTrackOfNewSet(set_name, set_type_annotation->IDENTIFIER()->getText());
-        }
-        else if (set_type_annotation->basicType())
-        {
-            // TODO currently, we do nothing for basic type element set
-            this->KeepTrackOfNewSet(set_name, set_type_annotation->basicType()->getText());
-        }
-    } else {
-        string entity_name = context->entityName()->getText();
-        const auto& attributes = context->attributeList()->attributeDecl();
-        for (auto attribute : attributes) {
-            string attribute_name = attribute->attributeName()->getText();
-            KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
-        }
+   
+    string entity_name = context->entityName()->getText();
+    const auto& attributes = context->attributeList()->attributeDecl();
+    for (auto attribute : attributes) {
+        string attribute_name = attribute->attributeName()->getText();
+        KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
     }
 
     // TODO should we return nullptr?
@@ -503,18 +484,18 @@ antlrcpp::Any EntityCollector::visitBasicRule(RuleParser::BasicRuleContext *cont
     return nullptr;
 }
 
-antlrcpp::Any EntityCollector::visitSetExpr(RuleParser::SetExprContext *context)
+antlrcpp::Any EntityCollector::visitListExpr(RuleParser::ListExprContext *context)
 {
     // TODO for erc20 blacklist rule, populate QueryEntitySet with provided Transfer.From
 
     // decide on different alternatives
     if (context->L_PAREN())
     {
-        ocall_print_string("visitSetExpr: alterantive 1", __FILE__, __LINE__);
+        ocall_print_string("visitListExpr: alterantive 1", __FILE__, __LINE__);
     }
     else if (context->selectorIdent())
     {
-        ocall_print_string("visitSetExpr: alterantive 2", __FILE__, __LINE__);
+        ocall_print_string("visitListExpr: alterantive 2", __FILE__, __LINE__);
 
         RuleEnclaveStatus status_code = RuleEnclaveStatus::kOK;
 
@@ -541,7 +522,7 @@ antlrcpp::Any EntityCollector::visitSetExpr(RuleParser::SetExprContext *context)
         constraint_list.push_back(constraint);
 
         // prepare new entity set
-        string entity_name = context->entityName()->getText();
+        string entity_name = context->IDENTIFIER()->getText();
 
         // NOTE: `entity_set` is deleted with `EntityCollector` destructor
         EntitySet *entity_set = new EntitySet(context->getText(), entity_name, constraint_list);
@@ -551,7 +532,7 @@ antlrcpp::Any EntityCollector::visitSetExpr(RuleParser::SetExprContext *context)
     }
 
     // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitSetExpr(context);
+    return RuleParserBaseVisitor::visitListExpr(context);
 }
 
 antlrcpp::Any EntityCollector::visitNumberExpr(RuleParser::NumberExprContext *context)
@@ -630,7 +611,7 @@ antlrcpp::Any EntityCollector::visitBooleanExpr(RuleParser::BooleanExprContext *
     {
         ocall_print_string("visitBooleanExpr: alterantive 1", __FILE__, __LINE__);
     }
-    else if (context->BOOLEAN_LIT())
+    else if (context->booleanLiteral())
     {
         ocall_print_string("visitBooleanExpr: alterantive 2", __FILE__, __LINE__);
     }
@@ -647,7 +628,7 @@ antlrcpp::Any EntityCollector::visitBooleanExpr(RuleParser::BooleanExprContext *
         // update entity attribute list
         this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
     }
-    else if (context->setExpr())
+    else if (context->listExpr())
     {
         ocall_print_string("visitBooleanExpr: alterantive 4", __FILE__, __LINE__);
     }
@@ -669,14 +650,14 @@ antlrcpp::Any EntityCollector::visitLogicalExpr(RuleParser::LogicalExprContext *
     ocall_print_string(("enter visitLogicalExpr: " + context->getText()).c_str(), __FILE__, __LINE__);
 
     // for logical expression, we only care about referenced identities
-    for (const auto &selector_identity : context->selectorIdent())
-    {
-        string entity_name = selector_identity->entityName()->getText();
-        string attribute_name = selector_identity->attributeName()->getText();
+    // for (const auto &selector_identity : context->selectorIdent())
+    // {
+    //     string entity_name = selector_identity->entityName()->getText();
+    //     string attribute_name = selector_identity->attributeName()->getText();
 
-        // mark identity as needed for entity query
-        this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
-    }
+    //     // mark identity as needed for entity query
+    //     this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
+    // }
 
     // Re-use base visitor function for traversing child nodes
     return RuleParserBaseVisitor::visitLogicalExpr(context);

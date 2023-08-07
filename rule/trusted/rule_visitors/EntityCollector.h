@@ -69,7 +69,7 @@ private:
                                 rule_check_proto::Constraint *const constraint);
     void GetNewWhereConstraint(RuleParser::BooleanExprContext *const context,
                                std::vector<rule_check_proto::Constraint> *const constraint_list);
-    void GetNewWhereConstraint(RuleParser::SetExprContext *const context,
+    void GetNewWhereConstraint(RuleParser::ListExprContext *const context,
                                rule_check_proto::Constraint *const constraint);
 
     void CollectEntitySetFromAggregationExpr(RuleParser::AggregationExprContext *const context);
@@ -134,7 +134,7 @@ public:
 
     // virtual antlrcpp::Any visitSetStmt(RuleParser::SetStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitSetExpr(RuleParser::SetExprContext *context) override;
+    virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *context) override;
 
     // virtual antlrcpp::Any visitRelationStmt(RuleParser::RelationStmtContext *context) = 0;
 

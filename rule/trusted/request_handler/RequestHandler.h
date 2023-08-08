@@ -19,7 +19,7 @@
 
 #include "trusted/data_types/RequestContext.h"
 #include "trusted/rule_processor/RuleProcessor.h"
-#include "trusted/rule_visitors/EntityCollector.h"
+#include "trusted/rule_visitors/SymbolCollector.h"
 
 // RequestHandler is used to help assemble context of request,
 // and provides APIs to init or free it.

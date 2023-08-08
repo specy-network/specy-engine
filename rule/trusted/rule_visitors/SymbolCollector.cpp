@@ -5,7 +5,7 @@
 //
 // This file implements EntityCollector class.
 
-#include "EntityCollector.h"
+#include "SymbolCollector.h"
 
 using namespace std;
 using namespace antlr4;

@@ -31,6 +31,22 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitOutputDecl(RuleParser::OutputDeclContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOutputAttribute(RuleParser::OutputAttributeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOutputObject(RuleParser::OutputObjectContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitObjectName(RuleParser::ObjectNameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitEntitiesBlock(RuleParser::EntitiesBlockContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -80,6 +96,10 @@ public:
   }
 
   virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecuteRuleDef(RuleParser::ExecuteRuleDefContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -139,6 +159,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitRelationOperator(RuleParser::RelationOperatorContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitNumberExpr(RuleParser::NumberExprContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -176,6 +200,18 @@ public:
   }
 
   virtual antlrcpp::Any visitQueryExpr(RuleParser::QueryExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitConditionExpr(RuleParser::ConditionExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitLogicalOperator(RuleParser::LogicalOperatorContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitBasicCondExpr(RuleParser::BasicCondExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

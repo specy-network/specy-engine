@@ -28,6 +28,18 @@ public:
   virtual void enterOutputBlock(RuleParser::OutputBlockContext * /*ctx*/) override { }
   virtual void exitOutputBlock(RuleParser::OutputBlockContext * /*ctx*/) override { }
 
+  virtual void enterOutputDecl(RuleParser::OutputDeclContext * /*ctx*/) override { }
+  virtual void exitOutputDecl(RuleParser::OutputDeclContext * /*ctx*/) override { }
+
+  virtual void enterOutputAttribute(RuleParser::OutputAttributeContext * /*ctx*/) override { }
+  virtual void exitOutputAttribute(RuleParser::OutputAttributeContext * /*ctx*/) override { }
+
+  virtual void enterOutputObject(RuleParser::OutputObjectContext * /*ctx*/) override { }
+  virtual void exitOutputObject(RuleParser::OutputObjectContext * /*ctx*/) override { }
+
+  virtual void enterObjectName(RuleParser::ObjectNameContext * /*ctx*/) override { }
+  virtual void exitObjectName(RuleParser::ObjectNameContext * /*ctx*/) override { }
+
   virtual void enterEntitiesBlock(RuleParser::EntitiesBlockContext * /*ctx*/) override { }
   virtual void exitEntitiesBlock(RuleParser::EntitiesBlockContext * /*ctx*/) override { }
 
@@ -66,6 +78,9 @@ public:
 
   virtual void enterExecutionStmt(RuleParser::ExecutionStmtContext * /*ctx*/) override { }
   virtual void exitExecutionStmt(RuleParser::ExecutionStmtContext * /*ctx*/) override { }
+
+  virtual void enterExecuteRuleDef(RuleParser::ExecuteRuleDefContext * /*ctx*/) override { }
+  virtual void exitExecuteRuleDef(RuleParser::ExecuteRuleDefContext * /*ctx*/) override { }
 
   virtual void enterExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext * /*ctx*/) override { }
   virtual void exitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext * /*ctx*/) override { }
@@ -109,6 +124,9 @@ public:
   virtual void enterRelationExpr(RuleParser::RelationExprContext * /*ctx*/) override { }
   virtual void exitRelationExpr(RuleParser::RelationExprContext * /*ctx*/) override { }
 
+  virtual void enterRelationOperator(RuleParser::RelationOperatorContext * /*ctx*/) override { }
+  virtual void exitRelationOperator(RuleParser::RelationOperatorContext * /*ctx*/) override { }
+
   virtual void enterNumberExpr(RuleParser::NumberExprContext * /*ctx*/) override { }
   virtual void exitNumberExpr(RuleParser::NumberExprContext * /*ctx*/) override { }
 
@@ -138,6 +156,15 @@ public:
 
   virtual void enterQueryExpr(RuleParser::QueryExprContext * /*ctx*/) override { }
   virtual void exitQueryExpr(RuleParser::QueryExprContext * /*ctx*/) override { }
+
+  virtual void enterConditionExpr(RuleParser::ConditionExprContext * /*ctx*/) override { }
+  virtual void exitConditionExpr(RuleParser::ConditionExprContext * /*ctx*/) override { }
+
+  virtual void enterLogicalOperator(RuleParser::LogicalOperatorContext * /*ctx*/) override { }
+  virtual void exitLogicalOperator(RuleParser::LogicalOperatorContext * /*ctx*/) override { }
+
+  virtual void enterBasicCondExpr(RuleParser::BasicCondExprContext * /*ctx*/) override { }
+  virtual void exitBasicCondExpr(RuleParser::BasicCondExprContext * /*ctx*/) override { }
 
   virtual void enterExpr(RuleParser::ExprContext * /*ctx*/) override { }
   virtual void exitExpr(RuleParser::ExprContext * /*ctx*/) override { }

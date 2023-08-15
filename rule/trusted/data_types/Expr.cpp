@@ -1,6 +1,6 @@
 #include "Expr.h"
 
-
+using namespace RuleLanguage;
 
 bool queryExpr::isSellect() {
     return sellect;
@@ -11,5 +11,5 @@ bool queryExpr::isCollect() {
 }
 
 Type queryExpr::type() {
-    return sellect ? Type::instance : Type::instance_list;
+    return sellect ? Type::INSTANCE : Type::INSTANCELIST;
 }

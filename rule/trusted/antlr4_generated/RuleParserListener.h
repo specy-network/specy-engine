@@ -26,6 +26,18 @@ public:
   virtual void enterOutputBlock(RuleParser::OutputBlockContext *ctx) = 0;
   virtual void exitOutputBlock(RuleParser::OutputBlockContext *ctx) = 0;
 
+  virtual void enterOutputDecl(RuleParser::OutputDeclContext *ctx) = 0;
+  virtual void exitOutputDecl(RuleParser::OutputDeclContext *ctx) = 0;
+
+  virtual void enterOutputAttribute(RuleParser::OutputAttributeContext *ctx) = 0;
+  virtual void exitOutputAttribute(RuleParser::OutputAttributeContext *ctx) = 0;
+
+  virtual void enterOutputObject(RuleParser::OutputObjectContext *ctx) = 0;
+  virtual void exitOutputObject(RuleParser::OutputObjectContext *ctx) = 0;
+
+  virtual void enterObjectName(RuleParser::ObjectNameContext *ctx) = 0;
+  virtual void exitObjectName(RuleParser::ObjectNameContext *ctx) = 0;
+
   virtual void enterEntitiesBlock(RuleParser::EntitiesBlockContext *ctx) = 0;
   virtual void exitEntitiesBlock(RuleParser::EntitiesBlockContext *ctx) = 0;
 
@@ -64,6 +76,9 @@ public:
 
   virtual void enterExecutionStmt(RuleParser::ExecutionStmtContext *ctx) = 0;
   virtual void exitExecutionStmt(RuleParser::ExecutionStmtContext *ctx) = 0;
+
+  virtual void enterExecuteRuleDef(RuleParser::ExecuteRuleDefContext *ctx) = 0;
+  virtual void exitExecuteRuleDef(RuleParser::ExecuteRuleDefContext *ctx) = 0;
 
   virtual void enterExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *ctx) = 0;
   virtual void exitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *ctx) = 0;
@@ -107,6 +122,9 @@ public:
   virtual void enterRelationExpr(RuleParser::RelationExprContext *ctx) = 0;
   virtual void exitRelationExpr(RuleParser::RelationExprContext *ctx) = 0;
 
+  virtual void enterRelationOperator(RuleParser::RelationOperatorContext *ctx) = 0;
+  virtual void exitRelationOperator(RuleParser::RelationOperatorContext *ctx) = 0;
+
   virtual void enterNumberExpr(RuleParser::NumberExprContext *ctx) = 0;
   virtual void exitNumberExpr(RuleParser::NumberExprContext *ctx) = 0;
 
@@ -136,6 +154,15 @@ public:
 
   virtual void enterQueryExpr(RuleParser::QueryExprContext *ctx) = 0;
   virtual void exitQueryExpr(RuleParser::QueryExprContext *ctx) = 0;
+
+  virtual void enterConditionExpr(RuleParser::ConditionExprContext *ctx) = 0;
+  virtual void exitConditionExpr(RuleParser::ConditionExprContext *ctx) = 0;
+
+  virtual void enterLogicalOperator(RuleParser::LogicalOperatorContext *ctx) = 0;
+  virtual void exitLogicalOperator(RuleParser::LogicalOperatorContext *ctx) = 0;
+
+  virtual void enterBasicCondExpr(RuleParser::BasicCondExprContext *ctx) = 0;
+  virtual void exitBasicCondExpr(RuleParser::BasicCondExprContext *ctx) = 0;
 
   virtual void enterExpr(RuleParser::ExprContext *ctx) = 0;
   virtual void exitExpr(RuleParser::ExprContext *ctx) = 0;

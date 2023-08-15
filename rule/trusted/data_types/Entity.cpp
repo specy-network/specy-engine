@@ -16,27 +16,35 @@ const string &Entity::get_id() const { return this->id_; }
 
 const string &Entity::get_name() const { return this->name_; }
 
-const set<string>& Entity::get_attribute_set() const {
-    return this->attribute_set_;
-}
-
 const set<string> &Entity::get_constraints_set() const {
     return this->constraints_;
 }
 
 const string Entity::toJSONString() const {
     Json entity_json = Json::object{{"id", this->id_},
-                                    {"name", this->name_},
-                                    {"attributes", this->attribute_set_}};
+                                    {"name", this->name_}};
 
     return entity_json.dump();
 }
 
-void Entity::addAttribute(const string &attribute_name) {
-    this->attribute_set_.insert(attribute_name);
+void Entity::addAttribute(const string &attribute_name, Attribute* attribute) {
+    attribute_list.insert({attribute_name, attribute});
 }
 
-void Entity::clearAttributes() { this->attribute_set_.clear(); }
+const std::map<std::string, Attribute*>& Entity::get_attribute_list() const {
+    return attribute_list;
+}
+
+void Entity::clearAttributes() { this->attribute_list.clear(); }
+
+void Entity::setUnique(bool value) {
+    unique = value;
+}
+
+bool Entity::isUnique() {
+    return unique;
+}
+
 
 void Entity::addConstraint(const string &c) { this->constraints_.insert(c); }
 
@@ -58,12 +66,12 @@ string Entity::dump() {
     entity_string += this->get_name();
     entity_string += "[";
     uint64_t counter = 0;
-    for (const auto &attribute : this->get_attribute_set()) {
-        if (counter++ > 0) {
-            entity_string += ", ";
-        }
-        entity_string += attribute;
-    }
+    // for (const auto &attribute : this->get_attribute_set()) {
+    //     if (counter++ > 0) {
+    //         entity_string += ", ";
+    //     }
+    //     entity_string += attribute;
+    // }
 
     entity_string += "]";
     return entity_string;

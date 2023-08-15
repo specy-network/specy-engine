@@ -8,12 +8,15 @@
 
 // using namespace std;
 
+class Attribute;
+
 class Entity : public EntityType {
    private:
     std::string id_;  // we use entity name as its id, i.e., id_ = name_
     std::string name_;
-    std::set<std::string> attribute_set_;
+    std::map<std::string, Attribute*> attribute_list;
     std::set<std::string> constraints_;
+    bool unique;
 
    public:
     Entity(const std::string &name);
@@ -23,13 +26,16 @@ class Entity : public EntityType {
     /* Data Member Getters */
 
     const std::string &get_id() const;
-    const std::string &get_name() const override;
-    const std::set<std::string>& get_attribute_set() const override;
+    const std::string &get_name() const;
+    const std::map<std::string, Attribute*>& get_attribute_list() const;
     const std::set<std::string> &get_constraints_set() const;
 
     const std::string toJSONString() const;
 
-    void addAttribute(const std::string &attribute_name);
+    void setUnique(bool value);
+    bool isUnique();
+
+    void addAttribute(const std::string &attribute_name, Attribute* attribute);
     void addConstraint(const std::string &attribute_name);
     void clearAttributes();
 

@@ -3,7 +3,7 @@
 //
 // Author:
 //
-// This file implements EntityCollector class.
+// This file implements SymbolCollector class.
 
 #include "SymbolCollector.h"
 
@@ -11,13 +11,7 @@ using namespace std;
 using namespace antlr4;
 using namespace rule_check_proto;
 
-/* Constructors and Destructors */
-EntityCollector::EntityCollector(RequestContext *const request_context)
-{
-    this->request_context_ = request_context;
-}
-
-EntityCollector::~EntityCollector()
+SymbolCollector::~SymbolCollector()
 {
     // De-allocate collected entity pointers
     for (const auto &entity_pair : this->entity_map_)
@@ -26,17 +20,599 @@ EntityCollector::~EntityCollector()
     }
     this->entity_map_.clear();
 
-    // De-allocate collected eneity set pointers
-    for (const auto &entity_set : this->entity_set_list_)
+}
+
+/* Internal Handler Member Functions */
+
+Attribute* SymbolCollector::createAttribute(std::string name, RuleLanguage::Type type) {
+
+    Attribute* ans = nullptr;
+
+    switch (type)
     {
-        delete entity_set;
+    case RuleLanguage::Type::NUMBER:
+        ans = new NumberAttribute(name, type);
+        break;
+
+    case RuleLanguage::Type::BOOLEAN:
+        ans = new BooleanAttribute(name, type);
+        break;
+
+    case RuleLanguage::Type::STRING:
+        ans = new StringAttribute(name, type);
+        break;
+
+    case RuleLanguage::Type::INSTANCE:
+        ans = new ObjectAttribute(name, type);
+        break;
+    
+    default:
+        break;
     }
-    this->entity_set_list_.clear();
+
+    return ans;
+}
+
+
+// mark entity as request needed, only concern specific attribute name
+void SymbolCollector::KeepTrackOfNewEntity(const string &entity_name, string &attribute_name, RuleLanguage::Type type)
+{
+    ocall_print_string((string("KeepTrackOfNewEntity: ") +
+                        entity_name + string("[") +
+                        attribute_name + string("]")).c_str(), __FILE__, __LINE__);
+    
+    auto attribute = createAttribute(attribute_name, type);
+    if (attribute == nullptr) {
+        ocall_print_string((string("Error: attribute type not support! ")).c_str(), __FILE__, __LINE__);
+        return;
+    }
+
+    // decide on whether entity exists
+    if (this->entity_map_.find(entity_name) == this->entity_map_.end())
+    {
+        // NOTE: `entity` is deleted with `SymbolCollector` destructor
+        Entity *entity = new Entity(entity_name);
+        entity->setUnique(false);
+        entity->addAttribute(attribute_name, attribute);
+        this->entity_map_[entity_name] = entity;
+    }
+    else
+    {
+        Entity *entity = this->entity_map_[entity_name];
+        entity->addAttribute(attribute_name, attribute);
+    }
+}
+
+void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, std::string &entity_name) {
+    ocall_print_string((string("KeepTrackOfNewInstance: ") +
+                        instance_name + string(" related to ") +
+                        entity_name).c_str(), __FILE__, __LINE__);
+    if (instance_map_.find(instance_name) == instance_map_.end()) {
+        Instance* instance = new Instance(instance_name);
+
+        if (!entity_name.empty()) {
+            instance->setUniqueEntityName(entity_name);
+            instance->addAttributes(entity_map_[entity_name]->get_attribute_list());
+        }
+
+        instance_map_.insert({instance_name, instance});
+    } else {
+        ocall_print_string((string("Error: ") +
+                        instance_name + string(" has been defined! ")).c_str(), __FILE__, __LINE__);
+    }
+}
+
+void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::Expr* expr) {
+    ocall_print_string((string("KeepTrackOfNewInstance: ") +
+                        instance_name + string(" related to expr")).c_str(), __FILE__, __LINE__);
+    
+    auto instance_map = rule_instance_map_[curr_rule_name_];
+    
+    if (instance_map.find(instance_name) == instance_map.end()) {
+        Instance* instance = new Instance(instance_name);
+        instance->setExpr(expr);
+        instance_map.insert({instance_name, instance});
+    } else {
+        ocall_print_string((string("Error: ") +
+                        instance_name + string(" has been defined! ")).c_str(), __FILE__, __LINE__);
+    }
+}
+
+/* Overridden Visitor Member Functions */
+antlrcpp::Any SymbolCollector::visitEntityDecl(RuleParser::EntityDeclContext *context)
+{
+    ocall_print_string(("enter visitEntityDecl: " + context->getText()).c_str(), __FILE__, __LINE__);
+
+    // check if we encounter a set entity declaration
+   
+    string entity_name = context->entityName()->getText();
+    const auto& attributes = context->attributeList()->attributeDecl();
+    for (auto attribute : attributes) {
+        string attribute_name = attribute->attributeName()->getText();
+        auto attribute_type = getAttributeTypeFromDef(attribute->typeAnno());
+        KeepTrackOfNewEntity(entity_name, attribute_name, attribute_type);
+    }
+
+    if (context->UNIQUE()) {
+        entity_map_[entity_name]->setUnique(true);
+        string instance_name = entity_name;
+        KeepTrackOfNewInstance(instance_name, entity_name);
+    }
+
+    return nullptr;
+}
+
+void SymbolCollector::setCurrRuleName (std::string &rule_name) {
+    curr_rule_name_ = rule_name;
+}
+
+antlrcpp::Any SymbolCollector::visitBasicRule(RuleParser::BasicRuleContext *context)
+{
+    ocall_print_string(("enter visitBasicRule: " + context->getText()).c_str(), __FILE__, __LINE__);
+    string rule_name = context->ruleName()->getText();
+    setCurrRuleName(rule_name);
+    InstanceMap m;
+    rule_instance_map_[rule_name] = m;
+    RuleStmts s;
+    rule_stmt_map_[rule_name] = s;
+
+    return nullptr;
+}
+
+Instance* SymbolCollector::handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type) {
+
+    string instance_name = context->entityName()->getText();
+    string attribute_name = context->attributeName()->getText();
+
+    if (instance_map_.find(instance_name) == instance_map_.end()) {
+        ocall_print_string((string("Error: undefined instance! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    auto instance = instance_map_[instance_name];
+    if (instance->hasAttribute(attribute_name, type)) {
+        return instance;
+    }
+    return nullptr;
+}
+
+
+RuleLanguage::booleanExpr* SymbolCollector::handleBooleanExpr(RuleParser::BooleanExprContext *context) {
+    
+    if (context == nullptr) {
+        ocall_print_string((string("Error: Parser Error! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    if (context->booleanExpr()) {
+        return handleBooleanExpr(context->booleanExpr());
+    }
+    
+    if (context->booleanLiteral()) {
+        RuleLanguage::booleanExpr* expr = new RuleLanguage::booleanExpr();
+        if (context->booleanLiteral()->getText().compare("true") == 0) {
+            expr->setValue(true);
+        } else if (context->booleanLiteral()->getText().compare("false") == 0) {
+            expr->setValue(false);
+        } else {
+            ocall_print_string((string("Error: illegal input! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        return expr;
+    }
+    
+    if (context->selectorIdent()) {
+        auto instance = handleSelectorIdent(context->selectorIdent(), RuleLanguage::Type::BOOLEAN);
+        
+        if (instance != nullptr) {
+            RuleLanguage::booleanExpr* expr = new RuleLanguage::booleanExpr();
+            expr->setInstance(instance);
+            return expr;
+        }
+
+        ocall_print_string((string("Error: illegal selectorIdent! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    if (context->relationExpr()) {
+        auto rExpr = handleRelationExpr(context->relationExpr());
+        if (rExpr == nullptr) {
+            return nullptr;
+        }
+        RuleLanguage::booleanExpr* expr = new RuleLanguage::booleanExpr();
+        expr->setExpr(rExpr);
+        return expr;
+    }
+
+    // TODO
+    // if (context->listExpr())
+
+    ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+    return nullptr;
+
+}
+
+RuleLanguage::logicalExpr* SymbolCollector::handleLogicalExpr(RuleParser::LogicalExprContext *context) {
+    if (context == nullptr) {
+        ocall_print_string((string("Error: Parser Error! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    if (context->booleanExpr()) {
+        RuleLanguage::logicalExpr *expr = new RuleLanguage::logicalExpr();
+        expr->setBooleanExpr(handleBooleanExpr(context->booleanExpr()));
+        return expr;
+    }
+    
+    if (context->LOGICAL_NOT()) {
+        RuleLanguage::logicalExpr *expr = new RuleLanguage::logicalExpr();
+        expr->setOperator(RuleLanguage::LogicalOperator::NOT);
+        auto rExpr = handleLogicalExpr(context->logicalExpr(0));
+        if (rExpr == nullptr) {
+            ocall_print_string((string("Error: illegal input! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        expr->setRightExpr(rExpr);
+        return expr;
+    } else if (context->LOGICAL_AND() || context->LOGICAL_OR()) {
+        RuleLanguage::logicalExpr *expr = new RuleLanguage::logicalExpr();
+        auto op = context->LOGICAL_AND() != nullptr ?  RuleLanguage::LogicalOperator::AND : RuleLanguage::LogicalOperator::OR;
+        expr->setOperator(op);
+        if (context->logicalExpr().size() == 2) {
+            expr->setLeftExpr(handleLogicalExpr(context->logicalExpr(0)));
+            expr->setLeftExpr(handleLogicalExpr(context->logicalExpr(1)));
+            return expr;
+        } else {
+            delete(expr);
+            ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+
+    } else {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+}
+
+RuleLanguage::ArithmeticOperator SymbolCollector::getOperator(RuleParser::NumberExprContext* context) {
+    if (context->MULTIPLY() != nullptr) {
+        return RuleLanguage::ArithmeticOperator::MULTIPLY;
+    }
+
+    if (context->MODULO() != nullptr) {
+        return RuleLanguage::ArithmeticOperator::MODULO;
+    }
+
+    if (context->DIVIDE() != nullptr) {
+        return RuleLanguage::ArithmeticOperator::DIVIDE;
+    }
+
+    if (context->PLUS() != nullptr) {
+        return RuleLanguage::ArithmeticOperator::PLUS;
+    }
+
+    if (context->MINUS() != nullptr) {
+        return RuleLanguage::ArithmeticOperator::MINUS;
+    }
+    return RuleLanguage::ArithmeticOperator::ARITH_NON;
+}
+
+RuleLanguage::numberExpr* SymbolCollector::handleNumberExpr(RuleParser::NumberExprContext *context) {
+    auto number_exprs = context->numberExpr();
+    if (number_exprs.size() == 1) {
+        auto expr = handleNumberExpr(number_exprs[0]);
+        if (context->MINUS()) {
+            expr->setNegative();
+        }
+        return expr;
+    }
+
+    if (number_exprs.size() == 2) {
+        auto op = getOperator(context);
+
+        if (op == RuleLanguage::ArithmeticOperator::ARITH_NON) {
+            ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+
+        auto left_expr = handleNumberExpr(number_exprs[0]);
+        auto right_expr = handleNumberExpr(number_exprs[1]);
+
+        if (left_expr == nullptr || right_expr == nullptr) {
+            ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        auto expr = new RuleLanguage::numberExpr();
+        expr->setLeftExpr(left_expr);
+        expr->setRightExpr(right_expr);
+        expr->setOperator(op);
+        return expr;
+    }
+
+    if (context->selectorIdent()) {
+        auto instance = handleSelectorIdent(context->selectorIdent(), RuleLanguage::Type::NUMBER);
+        if (instance != nullptr) {
+            auto expr = new RuleLanguage::numberExpr();
+            expr->setInstance(instance);
+            return expr;
+        }
+    }
+
+    if (context->DECIMAL_LIT()) {
+        string decimal_string = context->DECIMAL_LIT()->getText();
+        std::remove(decimal_string.begin(), decimal_string.end(), ',');
+
+        int64_t decimal_value = stoll(decimal_string);
+        if (decimal_value < 0) {
+            ocall_print_string((string("Error: illegal syntax! Exceed int64 type")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        auto expr = new RuleLanguage::numberExpr();
+        expr->setValue(decimal_value);
+        return expr;
+    }
+
+    if (context->DECIMAL_FLOAT_LIT()) {
+        ocall_print_string((string("Error: illegal syntax! Float not support!")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+    return nullptr;
+
+}
+
+bool SymbolCollector::getQueryOperator(RuleParser::QueryExprContext *context, RuleLanguage::queryExpr *expr) {
+    auto sellect_value = context->SELECT() != nullptr ? true : false;
+    auto collect_value = context->COLLECT() != nullptr ? true : false;
+
+    // query Expr must has one of sellect and collect
+    if (!sellect_value && !collect_value) {
+        ocall_print_string((string("Error: illegal syntax! query expr should be sellect or collect")).c_str(), __FILE__, __LINE__);
+        return false;
+    }
+
+    expr->setSellect(sellect_value);
+    expr->setCollect(collect_value);
+    return true;
+}
+
+Instance* SymbolCollector::getInstance(string name, RuleLanguage::Type type ) {
+    if (instance_map_.find(name) == instance_map_.end()) {
+        return nullptr;
+    }
+    auto instance = instance_map_[name];
+    if (instance->type() != type) {
+        return nullptr;
+    }
+    return instance;
+}
+
+Entity* SymbolCollector::getEntity(string name) {
+    if (entity_map_.find(name) == entity_map_.end()) {
+        return nullptr;
+    }
+
+    auto entity = entity_map_[name];
+    if (entity->isUnique()) {
+        return nullptr;
+    }
+
+    return entity;
+}
+
+RuleLanguage::Type SymbolCollector::getAttributeTypeFromDef(RuleParser::TypeAnnoContext* context) {
+    
+    // TODO: Instance should record entity 
+    if (context->compositeType()) {
+        return RuleLanguage::Type::INSTANCE;
+    }
+
+    if (context->basicType()->NUMBER()) {
+        return RuleLanguage::Type::NUMBER;
+    }
+
+    if (context->basicType()->BOOLEAN()) {
+        return RuleLanguage::Type::BOOLEAN;
+    }
+
+    if (context->basicType()->DATE()) {
+        return RuleLanguage::Type::DATE;
+    }
+
+    if (context->basicType()->STRING()) {
+        return RuleLanguage::Type::STRING;
+    }
+}
+
+RuleLanguage::LogicalOperator SymbolCollector::getLogicalOperator(RuleParser::LogicalOperatorContext *context) {
+    if (context->LOGICAL_AND()) {
+        return RuleLanguage::LogicalOperator::AND;
+    }
+
+    if (context->LOGICAL_OR()) {
+        return RuleLanguage::LogicalOperator::OR;
+    }
+
+    return RuleLanguage::LogicalOperator::LOGICAL_NON;
+}
+
+RuleLanguage::conditionExpr* SymbolCollector::handleConditionExpr(RuleParser::ConditionExprContext *context) {
+    auto basic_cond_exprs = context->basicCondExpr();
+    if (basic_cond_exprs.empty()) {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    auto expr = new RuleLanguage::conditionExpr();
+    auto first_expr = handleBasicCondExpr(basic_cond_exprs[0]);
+    if (first_expr == nullptr) {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+    expr->setBasicExpr(first_expr);
+
+    auto operators = context->logicalOperator();
+    for (int i = 1; i < basic_cond_exprs.size(); i++) {
+        auto bc_expr = handleBasicCondExpr(basic_cond_exprs[i]);
+        auto op = getLogicalOperator(operators[i - 1]);
+        bc_expr->setOperator(op);
+        expr->addExpr(bc_expr);
+    }
+
+    return expr;
+}
+
+
+
+RuleLanguage::queryExpr* SymbolCollector::handleQueryExpr(RuleParser::QueryExprContext *context) {
+    RuleLanguage::queryExpr *expr = new RuleLanguage::queryExpr();
+    if (!getQueryOperator(context, expr)) {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        delete(expr);
+        return nullptr;
+    }
+
+    auto entity_name = context->entityName()->getText();
+    auto entity = getEntity(entity_name);
+    auto instance = getInstance(entity_name, RuleLanguage::Type::INSTANCELIST);
+
+    if (entity == nullptr && instance == nullptr) {
+        ocall_print_string((string("Error: undefined entity or type miss match! ")).c_str(), __FILE__, __LINE__);
+        delete(expr);
+        return nullptr;
+    }
+
+    expr->setEntity(entity);
+    expr->setInstance(instance);
+
+
+    auto condExpr = handleConditionExpr(context->conditionExpr());
+    if (condExpr == nullptr && context->WHERE() == nullptr) {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    expr->setExpr(condExpr);
+    return expr;
+}
+
+RuleLanguage::basicCondExpr* SymbolCollector::handleBasicCondExpr(RuleParser::BasicCondExprContext *context) {
+    if (context->relationExpr()) {
+        auto expr = new RuleLanguage::basicCondExpr();
+        expr->setRelationExpr(handleRelationExpr(context->relationExpr()));
+        return expr;
+    }
+
+    if (context->listExpr()) {
+        auto expr = new RuleLanguage::basicCondExpr();
+        expr->setListExpr(handleListExpr(context->listExpr()));
+        return expr;
+    }
+
+    return nullptr;
+}
+
+RuleLanguage::RelationOperator SymbolCollector::getRelationOperator(RuleParser::RelationOperatorContext *context) {
+    if (context->EQUALS()) {
+        return RuleLanguage::RelationOperator::EQUALS;
+    }
+
+    if (context->NOT_EQUALS()) {
+        return RuleLanguage::RelationOperator::NOT_EQUALS;
+    }
+
+    if (context->LESS_THAN()) {
+        return RuleLanguage::RelationOperator::LESS_THAN;
+    }
+
+    if (context->LESS_OR_EQUALS()) {
+        return RuleLanguage::RelationOperator::LESS_OR_EQUALS;
+    }
+
+    if (context->GREATER_OR_EQUALS()) {
+        return RuleLanguage::RelationOperator::GREATER_OR_EQUALS;
+    }
+
+    if (context->GREATER_THAN()) {
+        return RuleLanguage::RelationOperator::GREATER;
+    }
+
+    return RuleLanguage::RelationOperator::RELATION_NON;
+}
+
+RuleLanguage::relationExpr* SymbolCollector::handleRelationExpr(RuleParser::RelationExprContext *context) {
+    if (context->relationExpr()) {
+        return handleRelationExpr(context->relationExpr());
+    }
+    auto numbers = context->numberExpr();
+    auto operators = context->relationOperator();
+
+    if (numbers.size() < 2) {
+        ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+        return nullptr;
+    }
+
+    auto expr = new RuleLanguage::relationExpr();
+    auto first_number_expr = handleNumberExpr(numbers[0]);
+    expr->setFirstExpr(first_number_expr);
+
+    for (int i = 1; i < numbers.size(); i++) {
+        expr->addNumberExpr(handleNumberExpr(numbers[i]));
+        expr->addOperator(getRelationOperator(operators[i - 1]));
+    }
+
+    return expr;
+    
+}
+
+RuleLanguage::listExpr* SymbolCollector::handleListExpr(RuleParser::ListExprContext *context) {
+    ocall_print_string((string("Error: list Expr is not support yet! ")).c_str(), __FILE__, __LINE__);
+    return nullptr;
+}
+
+
+
+antlrcpp::Any SymbolCollector::visitDefinitionStmt(RuleParser::DefinitionStmtContext *context)
+{
+    string instance_name = context->instanceName()->getText();
+    auto exprCtx = context->expr();
+    if (exprCtx->logicalExpr()) {
+        auto logical_expr = handleLogicalExpr(exprCtx->logicalExpr());
+        KeepTrackOfNewInstance(instance_name, logical_expr);
+    } else if (exprCtx->numberExpr()) {
+        auto number_expr = handleNumberExpr(exprCtx->numberExpr());
+        KeepTrackOfNewInstance(instance_name, number_expr);
+    } else if (exprCtx->queryExpr()) {
+        auto query_expr = handleQueryExpr(exprCtx->queryExpr());
+        KeepTrackOfNewInstance(instance_name, query_expr);
+    }
+
+    return nullptr;
+}
+
+
+antlrcpp::Any SymbolCollector::visitLogicalExpr(RuleParser::LogicalExprContext *context)
+{
+    auto expr = handleLogicalExpr(context);
+    auto rule_stmt_list = rule_stmt_map_[curr_rule_name_];
+    rule_stmt_list.push_back(expr);
+
+    return nullptr;
+}
+
+antlrcpp::Any SymbolCollector::visitRelationExpr(RuleParser::RelationExprContext *context)
+{
+    auto expr = handleRelationExpr(context);
+    auto rule_stmt_list = rule_stmt_map_[curr_rule_name_];
+    rule_stmt_list.push_back(expr);
+
+    return nullptr;
 }
 
 /* Data Member Getters */
-
-const vector<Entity> EntityCollector::get_entity_list() const
+const vector<Entity> SymbolCollector::get_entity_list() const
 {
     vector<Entity> entity_list;
     for (const auto &entity_pair : this->entity_map_)
@@ -47,618 +623,152 @@ const vector<Entity> EntityCollector::get_entity_list() const
     return entity_list;
 }
 
-const vector<EntitySet> EntityCollector::get_entity_set_list() const
-{
-    vector<EntitySet> entity_set_list;
-    for (const auto &entity_set : this->entity_set_list_)
-    {
-        entity_set_list.push_back(*entity_set);
-    }
+ExecuteRule* SymbolCollector::handleExecuteRuleDef(RuleParser::ExecuteRuleDefContext* context) {
+    auto rule = new ExecuteRule();
+    rule->rule_name = context->ruleName()->getText();
 
-    return entity_set_list;
-}
-
-RequestContext *const EntityCollector::get_request_context()
-{
-    return this->request_context_;
-}
-
-const string &EntityCollector::get_set_element_name(const string &set_name)
-{
-    return this->set_element_map_[set_name];
-}
-
-/* Internal Handler Member Functions */
-
-RuleEnclaveStatus EntityCollector::KeepTrackOfNewSet(const string &set_name, const string &element_name)
-{
-    ocall_print_string(("KeepTrackOfNewSet: " + set_name + "[" + element_name + "]").c_str(), __FILE__, __LINE__);
-
-    if (this->set_element_map_.find(set_name) == this->set_element_map_.end())
-    {
-        this->set_element_map_[set_name] = element_name;
-        return RuleEnclaveStatus::kOK;
-    }
-    else
-    {
-        /* handle duplicate set name */
-        // TODO how to handle this?
-        // assert(false);
-        return RuleEnclaveStatus::kError;
-    }
-}
-
-// // mark entire entity as request needed, omit specific attribute name
-// // NOTE: entity with empty attribute = request the whole entity with entire attributes
-// void EntityCollector::KeepTrackOfNewEntity(const string &entity_name)
-// {
-//     ocall_print_string((string("KeepTrackOfNewEntity: ") + entity_name).c_str(), __FILE__, __LINE__);
-
-//     // decide on whether entity exists
-//     if (this->entity_map_.find(entity_name) == this->entity_map_.end())
-//     {
-//         // NOTE: `entity` is deleted with `EntityCollector` destructor
-//         Entity *entity = new Entity(entity_name);
-//         // TODO (Xufei) entity_map_ should have a upper limit
-//         // if (this->entity_map_.size() > 50) {
-//         //     this->entity_map_.erase(this->entity_map_.begin(), this->entity_map_.end());
-//         // }
-//         this->entity_map_[entity_name] = entity;
-//     }
-//     else
-//     {
-//         Entity *entity = this->entity_map_[entity_name];
-//         // entity->get_attribute_set().clear();
-//         entity->clearAttributes();
-//     }
-// }
-
-// mark entity as request needed, only concern specific attribute name
-void EntityCollector::KeepTrackOfNewEntityAttribute(const string &entity_name, const string &attribute_name)
-{
-    ocall_print_string((string("KeepTrackOfNewEntityAttribute: ") +
-                        entity_name + string("[") +
-                        attribute_name + string("]")).c_str(), __FILE__, __LINE__);
-
-    // decide on whether entity exists
-    if (this->entity_map_.find(entity_name) == this->entity_map_.end())
-    {
-        // NOTE: `entity` is deleted with `EntityCollector` destructor
-        Entity *entity = new Entity(entity_name);
-        entity->addAttribute(attribute_name);
-        this->entity_map_[entity_name] = entity;
-    }
-    else
-    {
-        Entity *entity = this->entity_map_[entity_name];
-        entity->addAttribute(attribute_name);
-    }
-}
-
-// Constraint EntityCollector::GetNewProvidedConstraint(string ref_entity_name, string ref_attribute_name)
-void EntityCollector::GetNewProvidedConstraint(RuleParser::SelectorIdentContext *const context,
-                                               Constraint *const constraint)
-{
-    // get selector identity from context
-    string ref_entity_name = context->entityName()->getText();
-    string ref_attribute_name = context->attributeName()->getText();
-
-    // build provided type constraint
-    // Constraint constraint;
-    constraint->Clear();
-
-    // NOTE: `provided` is managed and deleted by `constraint`
-    Provided *provided_constraint = new Provided();
-
-    provided_constraint->set_entity(ref_entity_name);
-    provided_constraint->set_member(ref_attribute_name);
-
-    constraint->set_allocated_provided(provided_constraint);
-}
-
-void EntityCollector::GetNewWithinConstraint(tree::TerminalNode *const terminal_node,
-                                             Constraint *const constraint)
-{
-    // get time literal from terminal node
-    string time_literal = terminal_node->getText();
-
-    // NOTE: `within_constraint` is managed and deleted by `constraint`
-    Within *within_constraint = new Within();
-
-    // according to rule language design, time literal is splitted by "[ \t]+" white spaces
-    char delimiter_blank = ' ';
-    char delimiter_table = '\t';
-
-    // we assume the given time literal is of struct: DECIMAL_LIT [ \t]+ TIME_UNIT
-    uint64_t delimiter_blank__first_pos = time_literal.find_first_of(delimiter_blank);
-    uint64_t delimiter_table_first_pos = time_literal.find_first_of(delimiter_blank);
-
-    uint64_t delimiter_blank__last_pos = time_literal.find_last_of(delimiter_blank);
-    uint64_t delimiter_table_last_pos = time_literal.find_last_of(delimiter_blank);
-
-    // determine the first and last position of white spaces
-    uint64_t first_pos = min(delimiter_blank__first_pos, delimiter_table_first_pos);
-    uint64_t last_pos = max(delimiter_blank__last_pos, delimiter_table_last_pos);
-
-    // retrieve decimal literal and time unit using known white space positions
-    string decimal_literal = time_literal.substr(0, first_pos);
-    string time_unit_literal = time_literal.substr(last_pos + 1);
-
-    // set constraint attribute
-    within_constraint->set_value(stoi(decimal_literal));
-    // decide on time unit literal
-    if (time_unit_literal == "day" || time_unit_literal == "days")
-    {
-        within_constraint->set_unit(Within::DAY);
-    }
-    else if (time_unit_literal == "hour" || time_unit_literal == "hours")
-    {
-        within_constraint->set_unit(Within::HOUR);
-    }
-    else if (time_unit_literal == "minute" || time_unit_literal == "minutes")
-    {
-        within_constraint->set_unit(Within::MINIT);
-    }
-    else if (time_unit_literal == "second" || time_unit_literal == "seconds")
-    {
-        within_constraint->set_unit(Within::SEC);
-    }
-
-    // construct constraint
-    // Constraint constraint;
-    constraint->Clear();
-    constraint->set_allocated_within(within_constraint);
-}
-
-void EntityCollector::GetNewWhereConstraint(RuleParser::BooleanExprContext *const context,
-                                            vector<Constraint> *const constraint_list)
-{
-    // decide on different alternatives
-    if (context->L_PAREN())
-    {
-        // booleanExpr => ( booleanExpr )
-        this->GetNewWhereConstraint(context->booleanExpr(), constraint_list);
-    }
-    else if (context->relationExpr())
-    {
-        auto relation_expression_context = context->relationExpr();
-
-        // vector<Constraint> constraint_list;
-        constraint_list->clear();
-
-        uint64_t number_child_context = relation_expression_context->children.size();
-
-        // traverse through each child context node to collect where constraint
-        // i = start index of left number expression
-        auto child_context_list = relation_expression_context->children;
-        for (uint64_t i = 0; i < number_child_context - 2; i += 2)
-        {
-            // TODO add error handling
-            //      we assume child contexts are well formed
-            RuleParser::NumberExprContext *left_number_expression =
-                dynamic_cast<RuleParser::NumberExprContext *>(child_context_list[i]); // numberExpr
-            tree::TerminalNode *relation_operator =
-                dynamic_cast<tree::TerminalNode *>(child_context_list[i + 1]); // operator
-            RuleParser::NumberExprContext *right_number_expression =
-                dynamic_cast<RuleParser::NumberExprContext *>(child_context_list[i + 2]); // numberExpr
-            assert(left_number_expression != nullptr);
-            assert(relation_operator != nullptr);
-            assert(right_number_expression != nullptr);
-
-            // construct a new where constraint
-            Constraint constraint;
-
-            // NOTE: `where_constraint` is managed and deleted by `constraint`
-            Where *where_constraint = new Where();
-
-            // TODO we assume that both number expresisons consist of either selector identity
-            //      or number literal, and treat other alternatives as illegal currently
-            assert(left_number_expression->selectorIdent() ||
-                   left_number_expression->DECIMAL_LIT() ||
-                   left_number_expression->DECIMAL_FLOAT_LIT());
-            assert(right_number_expression->selectorIdent() ||
-                   right_number_expression->DECIMAL_LIT() ||
-                   right_number_expression->DECIMAL_FLOAT_LIT());
-
-            // decide on different alternatives for left number expression
-            if (left_number_expression->selectorIdent())
-            {
-                auto selector_identity = left_number_expression->selectorIdent();
-                where_constraint->set_left_entity(selector_identity->entityName()->getText());
-                where_constraint->set_left_member(selector_identity->attributeName()->getText());
-            }
-            else if (left_number_expression->DECIMAL_LIT())
-            {
-                double number_value;
-                this->ParseNumberLiteral(left_number_expression->DECIMAL_LIT(), &number_value);
-
-                // omit entity name if number expression is a number literal
-                where_constraint->set_left_member(to_string(number_value));
-            }
-            else if (left_number_expression->DECIMAL_FLOAT_LIT())
-            {
-                double number_value;
-                this->ParseNumberLiteral(left_number_expression->DECIMAL_FLOAT_LIT(), &number_value);
-
-                // omit entity name if number expression is a number literal
-                where_constraint->set_left_member(to_string(number_value));
-            }
-
-            // decide on different alternatives for opeartor
-            switch (relation_operator->getSymbol()->getType())
-            {
-            case RuleLexer::EQUALS:
-                where_constraint->set_operator_(Where_OPERATOR_EQ);
-                break;
-
-            case RuleLexer::NOT_EQUALS:
-                where_constraint->set_operator_(Where_OPERATOR_NEQ);
-                break;
-
-            case RuleLexer::GREATER_THAN:
-                where_constraint->set_operator_(Where_OPERATOR_GT);
-                break;
-
-            case RuleLexer::GREATER_OR_EQUALS:
-                where_constraint->set_operator_(Where_OPERATOR_EGT);
-                break;
-
-            case RuleLexer::LESS_THAN:
-                where_constraint->set_operator_(Where_OPERATOR_LT);
-                break;
-
-            case RuleLexer::LESS_OR_EQUALS:
-                where_constraint->set_operator_(Where_OPERATOR_ELT);
-                break;
-            }
-
-            // decide on different alternatives for right number expression
-            if (right_number_expression->selectorIdent())
-            {
-                auto selector_identity = right_number_expression->selectorIdent();
-                where_constraint->set_right_entity(selector_identity->entityName()->getText());
-                where_constraint->set_right_member(selector_identity->attributeName()->getText());
-            }
-            else if (right_number_expression->DECIMAL_LIT())
-            {
-                double number_value;
-                this->ParseNumberLiteral(right_number_expression->DECIMAL_LIT(), &number_value);
-
-                // omit entity name if number expression is a number literal
-                where_constraint->set_right_member(to_string(number_value));
-            }
-            else if (right_number_expression->DECIMAL_FLOAT_LIT())
-            {
-                double number_value;
-                this->ParseNumberLiteral(right_number_expression->DECIMAL_FLOAT_LIT(), &number_value);
-
-                // omit entity name if number expression is a number literal
-                where_constraint->set_right_member(to_string(number_value));
-            }
-
-            // store collected new where constraint
-            constraint.set_allocated_where(where_constraint);
-            constraint_list->push_back(constraint);
+    if (context->executionTrueStmt()) {
+        auto tbranch = handleExecutionTrueStmt(context->executionTrueStmt());
+        if (tbranch == nullptr) {
+            return nullptr;
         }
+        rule->true_branch = tbranch;
     }
-}
-
-void EntityCollector::GetNewWhereConstraint(RuleParser::ListExprContext *context,
-                                            Constraint *const constraint)
-{
-    // decide on different alternatives
-    if (context->L_PAREN())
-    {
-        this->GetNewWhereConstraint(context->listExpr(), constraint);
-    }
-    else
-    {
-        // Constraint constraint;
-        // NOTE: `where_constraint` is managed and deleted by `constraint`
-        Where *where_constraint = new Where();
-
-        // left entity
-        auto selector_identity = context->selectorIdent();
-
-        // right entity, i.e., set entity
-        // retrieve set's element from previous definition
-        string set_entity_name = context->IDENTIFIER()->getText();
-        string set_element_name = this->get_set_element_name(set_entity_name);
-
-        ocall_print_string(("GetNewWhereConstraint: " + set_entity_name +
-                            "[" + set_element_name + "]").c_str(), __FILE__, __LINE__);
-
-        // construct where constraint
-        // left entity
-        where_constraint->set_left_entity(selector_identity->entityName()->getText());
-        where_constraint->set_left_member(selector_identity->attributeName()->getText());
-        // middle operator
-        where_constraint->set_operator_(Where_OPERATOR_EQ);
-        // right entity
-        where_constraint->set_right_entity(set_entity_name);
-        where_constraint->set_right_member(set_element_name);
-
-        // collected where constraint
-        constraint->set_allocated_where(where_constraint);
-    }
-}
-
-void EntityCollector::CollectEntitySetFromAggregationExpr(RuleParser::AggregationExprContext *const context)
-{
-    // entity set constraint list
-    vector<Constraint> constraint_list;
-    // prepare new entity set
-    string entity_name = context->entityName()->getText();
-
-    // decide on different constraints
-    if (context->PROVIDED())
-    {
-        ocall_print_string("visitAggregationExpr: alterantive 1: provided constraint", __FILE__, __LINE__);
-
-        // traverse each provided selector identity
-        for (const auto &selector_identity : context->selectorIdent())
-        {
-            // build provided type constraint
-            Constraint constraint;
-            this->GetNewProvidedConstraint(selector_identity, &constraint);
-
-            // append new constraint
-            constraint_list.push_back(constraint);
+    
+    if (context->executionFalseStmt()) {
+        auto fbranch = handleExecutionFalseStmt(context->executionFalseStmt());
+        if (fbranch == nullptr) {
+            return nullptr;
         }
-    }
-    if (context->WHERE())
-    {
-        ocall_print_string("visitAggregationExpr: alterantive 2: where constraint", __FILE__, __LINE__);
-
-        // TODO add error handling
-        vector<Constraint> where_constraint_list;
-        this->GetNewWhereConstraint(context->booleanExpr(), &where_constraint_list);
-
-        // append where constraint list into overall constraint list
-        constraint_list.insert(constraint_list.end(),
-                               where_constraint_list.begin(),
-                               where_constraint_list.end());
-    }
-    // if (context->BEFORE() || context->AFTER())
-    // {
-    //     ocall_print_string("visitAggregationExpr: alterantive 3: date constraint");
-
-    //     // TODO deal with entities in date clause
-    // }
-    if (context->WITHIN())
-    {
-        ocall_print_string("visitAggregationExpr: alterantive 4: time constraint", __FILE__, __LINE__);
-
-        // TODO parse time literal
-        // TODO change within constraint proto
-        Constraint constraint;
-        this->GetNewWithinConstraint(context->TIME_LIT(), &constraint);
-
-        // append new constraint
-        constraint_list.push_back(constraint);
+        rule->false_branch = fbranch;
     }
 
-    // NOTE: here we use rule context text as entity set id
-    // NOTE: `entity_set` is deleted with `EntityCollector` destructor
-    EntitySet *entity_set = new EntitySet(context->getText(), entity_name, constraint_list);
-    if (context->ACCUMULATE() && context->numberExpr()->selectorIdent()) {
-        auto selector = context->numberExpr()->selectorIdent();
-        entity_set->add_attributes(selector->attributeName()->getText());
-    }
-
-    // store new collected entity set
-    this->entity_set_list_.push_back(entity_set);
+    return rule;
 }
 
-/* Overridden Visitor Member Functions */
+ExecuteRule* SymbolCollector::handleExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext* context) {
+    if (context->ruleName()) {
+        auto rule = new ExecuteRule();
+        rule->rule_name = context->ruleName()->getText();
+        return rule;
+    }
 
-antlrcpp::Any EntityCollector::visitEntityDecl(RuleParser::EntityDeclContext *context)
-{
-    ocall_print_string(("enter visitEntityDecl: " + context->getText()).c_str(), __FILE__, __LINE__);
+    if (context->executeRuleDef()) {
+        return handleExecuteRuleDef(context->executeRuleDef());
+    }
 
-    // check if we encounter a set entity declaration
-   
-    string entity_name = context->entityName()->getText();
-    const auto& attributes = context->attributeList()->attributeDecl();
+    return nullptr;
+}
+
+ExecuteRule* SymbolCollector::handleExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext* context) {
+    if (context->ruleName()) {
+        auto rule = new ExecuteRule();
+        rule->rule_name = context->ruleName()->getText();
+        return rule;
+    }
+
+    if (context->executeRuleDef()) {
+        return handleExecuteRuleDef(context->executeRuleDef());
+    }
+
+    return nullptr;
+}
+
+bool SymbolCollector::generateExecuteTree(RuleParser::ExecuteRuleDefContext* context) {
+    
+    if (context->executionTrueStmt()) {
+        auto true_rule = handleExecutionTrueStmt(context->executionTrueStmt());
+        if (true_rule == nullptr) {
+            return false;
+        }
+        execute_root->true_branch = true_rule;
+    }
+    
+    if (context->executionFalseStmt()) {
+        auto false_rule = handleExecutionFalseStmt(context->executionFalseStmt());
+        if (false_rule == nullptr) {
+            return false;
+        }
+        execute_root->false_branch = false_rule;
+    }
+
+    return true;
+}
+
+antlrcpp::Any SymbolCollector::visitExecutionStmt(RuleParser::ExecutionStmtContext *context) {
+    auto ruleDef = context->executeRuleDef();
+
+    execute_root = new ExecuteRule();
+    execute_root->rule_name = ruleDef->ruleName()->getText();
+    generateExecuteTree(ruleDef);
+
+    return nullptr;
+}
+
+antlrcpp::Any SymbolCollector::visitInputBlock(RuleParser::InputBlockContext *context) {
+    auto attributes = context->attributeList()->attributeDecl();
+    if (attributes.size() == 0) {
+        return nullptr;
+    }
+
+    input_instance_ = new Instance("input");
+
     for (auto attribute : attributes) {
-        string attribute_name = attribute->attributeName()->getText();
-        KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
+        auto attribute_name = attribute->attributeName()->getText();
+        auto attribute_type = getAttributeTypeFromDef(attribute->typeAnno());
+        input_instance_->addAttribute(attribute_name, createAttribute(attribute_name, attribute_type));
     }
 
-    // TODO should we return nullptr?
     return nullptr;
 }
 
-antlrcpp::Any EntityCollector::visitBasicRule(RuleParser::BasicRuleContext *context)
-{
+ObjectAttribute* SymbolCollector::handleOutputObject(RuleParser::OutputObjectContext* context) {
+    auto object_name = context->objectName()->getText();
+    auto decls = context->outputDecl();
+    auto instance_value = new Instance(object_name);
 
-    string rule_id = context->ruleName()->getText();
+    for (auto decl : decls) {
+        auto decl_attribute = handleOutputDecl(decl);
+        if (decl_attribute == nullptr) {
+            ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        instance_value->addAttribute(decl_attribute->getName(), decl_attribute);
+    }
 
+    auto object = new ObjectAttribute(object_name, RuleLanguage::Type::INSTANCE, instance_value);
+    return object;
+}
 
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitBasicRule(context);
+Attribute* SymbolCollector::handleOutputDecl(RuleParser::OutputDeclContext* context) {
+    
+    if (context->outputAttribute()) {
+        auto attribute = context->outputAttribute();
+        auto attribute_name = attribute->attributeName()->getText();
+        auto attribute_type = getAttributeTypeFromDef(attribute->typeAnno());
+        return createAttribute(attribute_name, attribute_type);
+    }
 
-    ocall_print_string(("visitBasicRule: skip basic rule: " + rule_id).c_str(), __FILE__, __LINE__);
+    if (context->outputObject()) {
+        return handleOutputObject(context->outputObject());
+    }
+}
 
-    // TODO should we return nullptr?
+antlrcpp::Any SymbolCollector::visitOutputBlock(RuleParser::OutputBlockContext *context) {
+    auto output_decls = context->outputDecl();
+    output_instance_ = new Instance("output");
+
+    for (auto output_decl : output_decls) {
+        auto attribute = handleOutputDecl(output_decl);
+        if (attribute == nullptr) {
+            ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
+            return nullptr;
+        }
+        output_instance_->addAttribute(attribute->getName(), attribute);
+    }
+
     return nullptr;
 }
 
-antlrcpp::Any EntityCollector::visitListExpr(RuleParser::ListExprContext *context)
-{
-    // TODO for erc20 blacklist rule, populate QueryEntitySet with provided Transfer.From
 
-    // decide on different alternatives
-    if (context->L_PAREN())
-    {
-        ocall_print_string("visitListExpr: alterantive 1", __FILE__, __LINE__);
-    }
-    else if (context->selectorIdent())
-    {
-        ocall_print_string("visitListExpr: alterantive 2", __FILE__, __LINE__);
 
-        RuleEnclaveStatus status_code = RuleEnclaveStatus::kOK;
-
-        // (1) collect entity and attribute
-        auto selector_identity = context->selectorIdent();
-
-        string ref_entity_name = selector_identity->entityName()->getText();
-        string ref_attribute_name = selector_identity->attributeName()->getText();
-
-        // update entity attribute list
-        this->KeepTrackOfNewEntityAttribute(ref_entity_name, ref_attribute_name);
-
-        // (2) collect entity set and constraint
-        // TODO assert context->entityName is of type set, e.g., Transfer.From in Blacklist
-
-        // entity set constraint list
-        vector<Constraint> constraint_list;
-
-        // build provided type constraint
-        // Constraint constraint = this->GetNewProvidedConstraint(ref_entity_name, ref_attribute_name);
-        // Constraint constraint = this->GetNewProvidedConstraint(selector_identity);
-        Constraint constraint;
-        this->GetNewWhereConstraint(context, &constraint);
-        constraint_list.push_back(constraint);
-
-        // prepare new entity set
-        string entity_name = context->IDENTIFIER()->getText();
-
-        // NOTE: `entity_set` is deleted with `EntityCollector` destructor
-        EntitySet *entity_set = new EntitySet(context->getText(), entity_name, constraint_list);
-
-        // store new collected entity set
-        this->entity_set_list_.push_back(entity_set);
-    }
-
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitListExpr(context);
-}
-
-antlrcpp::Any EntityCollector::visitNumberExpr(RuleParser::NumberExprContext *context)
-{
-    ocall_print_string(("enter visitNumberExpr: " + context->getText()).c_str(), __FILE__, __LINE__);
-
-    // decide on different alternatives
-    if (context->L_PAREN())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 1", __FILE__, __LINE__);
-    }
-    else if (context->selectorIdent())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 2", __FILE__, __LINE__);
-
-        // collect entity and attribute
-        auto selector_identity = context->selectorIdent();
-
-        string entity_name = selector_identity->entityName()->getText();
-        string attribute_name = selector_identity->attributeName()->getText();
-
-        // update entity attribute list
-        this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
-    }
-    else if (context->DECIMAL_LIT() || context->DECIMAL_FLOAT_LIT())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 3", __FILE__, __LINE__);
-    }
-    else if (context->MULTIPLY() || context->DIVIDE() || context->MODULO())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 4", __FILE__, __LINE__);
-    }
-    else if (context->PLUS() || context->MINUS())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 5", __FILE__, __LINE__);
-    }
-    else if (context->aggregationExpr())
-    {
-        ocall_print_string("visitNumberExpr: alterantive 6", __FILE__, __LINE__);
-    }
-
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitNumberExpr(context);
-}
-
-antlrcpp::Any EntityCollector::visitAggregationExpr(RuleParser::AggregationExprContext *context)
-{
-    ocall_print_string(("enter visitAggregationExpr: " + context->getText()).c_str(), __FILE__, __LINE__);
-
-    // decide on different alternatives
-    if (context->ACCUMULATE())
-    {
-        ocall_print_string("visitAggregationExpr: alterantive 1", __FILE__, __LINE__);
-
-        // employ internal handler to collect entity set
-        this->CollectEntitySetFromAggregationExpr(context);
-    }
-    else if (context->COUNT())
-    {
-        ocall_print_string("visitAggregationExpr: alterantive 2", __FILE__, __LINE__);
-
-        // employ internal handler to collect entity set
-        this->CollectEntitySetFromAggregationExpr(context);
-    }
-
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitAggregationExpr(context);
-}
-
-antlrcpp::Any EntityCollector::visitBooleanExpr(RuleParser::BooleanExprContext *context)
-{
-    ocall_print_string(("enter visitBooleanExpr: " + context->getText()).c_str(), __FILE__, __LINE__);
-
-    // decide on different alternatives
-    if (context->L_PAREN())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 1", __FILE__, __LINE__);
-    }
-    else if (context->booleanLiteral())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 2", __FILE__, __LINE__);
-    }
-    else if (context->selectorIdent())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 3", __FILE__, __LINE__);
-
-        // collect entity and attribute
-        auto selector_identity = context->selectorIdent();
-
-        string entity_name = selector_identity->entityName()->getText();
-        string attribute_name = selector_identity->attributeName()->getText();
-
-        // update entity attribute list
-        this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
-    }
-    else if (context->listExpr())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 4", __FILE__, __LINE__);
-    }
-    else if (context->relationExpr())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 5", __FILE__, __LINE__);
-    }
-    else if (context->logicalExpr())
-    {
-        ocall_print_string("visitBooleanExpr: alterantive 6", __FILE__, __LINE__);
-    }
-
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitBooleanExpr(context);
-}
-
-antlrcpp::Any EntityCollector::visitLogicalExpr(RuleParser::LogicalExprContext *context)
-{
-    ocall_print_string(("enter visitLogicalExpr: " + context->getText()).c_str(), __FILE__, __LINE__);
-
-    // for logical expression, we only care about referenced identities
-    // for (const auto &selector_identity : context->selectorIdent())
-    // {
-    //     string entity_name = selector_identity->entityName()->getText();
-    //     string attribute_name = selector_identity->attributeName()->getText();
-
-    //     // mark identity as needed for entity query
-    //     this->KeepTrackOfNewEntityAttribute(entity_name, attribute_name);
-    // }
-
-    // Re-use base visitor function for traversing child nodes
-    return RuleParserBaseVisitor::visitLogicalExpr(context);
-}

@@ -19,35 +19,6 @@ using namespace std;
 using namespace json11;
 using namespace antlr4;
 
-static void dumpEntityList(vector<Entity>& entity_list) {
-    ocall_print_string("EvaluateRule: dump entity list", __FILE__, __LINE__);
-
-    for (auto &entity : entity_list)
-    {
-        string entity_string;
-        // basic entity info
-        auto entity_name = entity.get_name();
-        auto attribute_set = entity.get_attribute_set();
-
-        entity_string += ("EvaluateRule: entity: " + entity_name + "[");
-
-        // traverse through attribute set
-        uint64_t counter = 0;
-        for (auto &attribute : attribute_set)
-        {
-            if (counter++ > 0)
-            {
-                entity_string += ", ";
-            }
-            entity_string += attribute;
-        }
-
-        entity_string += "]";
-
-        ocall_print_string((string("EvaluateRule: new entity: ") + entity_string).c_str(), __FILE__, __LINE__);
-    }
-}
-
 static void dumpEntitySetList(vector<EntitySet>& entity_set_list) {
     ocall_print_string("EvaluateRule: dump entity set list", __FILE__, __LINE__);
     for (auto &entity_set : entity_set_list)
@@ -100,68 +71,6 @@ void GenerateQuerySentences (const string& rule_text, vector<string>& sentences)
 // EvaluateRule is used to regulate transaction with rules
 RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_context)
 {
-    ocall_print_string("enter EvaluateRule", __FILE__, __LINE__);
-
-    RuleEnclaveStatus status_code = RuleEnclaveStatus::kOK;
-    const string& rule_text = request_context->get_rule_text();
-    vector<string> sentences;
-
-    // generate query sentence
-    GenerateQuerySentences(rule_text, sentences);
-
-    // get query result
-    DataProvider provider;
-    Json query_nft_result;
-    provider.QueryDataFromGraphnodeJson(sentences[0], "ics721", query_nft_result);
-    ocall_print_string(("entity binding" + query_nft_result.dump()).c_str(), __FILE__, __LINE__);
-
-    Json query_list_result;
-    provider.QueryDataFromGraphnodeJson(sentences[1], "rewards", query_list_result);
-    ocall_print_string(("entity binding" + query_list_result.dump()).c_str(), __FILE__, __LINE__);
-    // check rule
-
-    set<string> rewardNFTList;
-    auto queryRewardList = query_list_result["data"]["rewardlists"];
-    auto queryList = queryRewardList.array_items()[0]["list"];
-    for (auto item : queryList.array_items()) {
-        rewardNFTList.insert(item.string_value());
-    }
-
-    vector<string> rewardUserLists;
-    auto queryNFTs = query_nft_result["data"]["interchainnftreceives"];
-    ocall_print_string(queryNFTs.dump().c_str(), __FILE__, __LINE__);
-    for (auto NFT : queryNFTs.array_items()) {
-        ocall_print_string(NFT.dump().c_str(), __FILE__, __LINE__);
-        if (rewardNFTList.find(NFT["class_id"].string_value()) != rewardNFTList.end()) {
-            rewardUserLists.push_back(NFT["receiver"].string_value());
-        }
-    }
-
-    for (auto s : rewardNFTList) {
-        ocall_print_string(s.c_str(), __FILE__, __LINE__);
-    }
-
-    merkle::TreeT<32, sha256_sgx> tree;
-
-    for (auto s : rewardUserLists) {
-        ocall_print_string(s.c_str(), __FILE__, __LINE__);
-        uint8_t hash[32];
-        sgx_sha256_msg((unsigned char*)s.c_str(), s.length(), &hash);
-        merkle::HashT<32> merkleNode(hash);
-        ocall_print_string(merkleNode.to_string().c_str(), __FILE__, __LINE__);
-        tree.insert(merkleNode);
-    }
-
-    auto root = tree.root();
-    request_context->result_byte = root.to_string();
-    ocall_print_string(request_context->result_byte.c_str(), __FILE__, __LINE__);
-
-    uint8_t text_hash[32];
-    sgx_sha256_msg((unsigned char*)rule_text.c_str(), rule_text.length(), &text_hash);
-    merkle::HashT<32> text_hash_node(text_hash);
-    request_context->rule_file_hash = text_hash_node.to_string();
-
-    // TODO build rule check result
-    ocall_print_string("exit EvaluateRule", __FILE__, __LINE__);
+    
     return RuleEnclaveStatus::kOK;
 }

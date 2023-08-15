@@ -3,7 +3,7 @@
 //
 // Author:
 //
-// This file declares EntityCollector class.
+// This file declares SymbolCollector class.
 
 #pragma once
 
@@ -17,6 +17,7 @@
 #include "antlr4-runtime.h"
 #include "trusted/data_types/Entity.h"
 #include "trusted/data_types/EntitySet.h"
+#include "trusted/data_types/Instance.h"
 #include "common/data_types/rule_check/ErrorType.h"
 #include "rule_enclave/EntityQuery.pb.h"
 
@@ -29,142 +30,120 @@
 // using namespace std;
 // using namespace antlr4;
 
-// `EntityCollector` extends BaseVisitor with additional utility functions
-class EntityCollector : public BaseVisitor
+// `SymbolCollector` extends BaseVisitor with additional utility functions
+
+using InstanceMap = std::map<std::string, Instance*>;
+using RuleStmts = std::vector<RuleLanguage::Expr*>;
+
+class ExecuteRule {
+    public:
+        std::string rule_name;
+        ExecuteRule* true_branch;
+        ExecuteRule* false_branch;
+        ~ExecuteRule() {
+            if (true_branch) {
+                delete(true_branch);
+            }
+
+            if (false_branch) {
+                delete(false_branch);
+            }
+        }
+};
+
+class SymbolCollector : public BaseVisitor
 {
 private:
     // map from entity name (aka id) to entity request
     std::map<std::string, Entity *> entity_map_;
+    InstanceMap instance_map_;
+    std::map<std::string, InstanceMap> rule_instance_map_;
+    std::map<std::string, RuleStmts> rule_stmt_map_;
 
-    // list of entity set requestes
-    std::vector<EntitySet *> entity_set_list_;
+    ExecuteRule* execute_root;
 
-    // rule check request context
-    RequestContext *request_context_;
+    Instance* input_instance_;
+    Instance* output_instance_;
 
-    // map from set (entity) name to set element
-    // for retrieve set element from set name
-    std::map<std::string, std::string> set_element_map_;
-
-    /* Internal Handler Member Functions */
-
-    // mark set and element name as known
-    RuleEnclaveStatus KeepTrackOfNewSet(const std::string &set_name, const std::string &element_name);
-
-    // TODO the following some functions are shared with RuleEvaluator,
-    //      and can be put into a common Base class
-    // std::string FilterNumberLiteral(const std::string &number_string);
-    // double ParseNumberLiteral(const std::string &number_string);
-    // double ParseNumberLiteral(antlr4::tree::TerminalNode *const terminal_node);
-
-    // mark entity in collection
-    void KeepTrackOfNewEntity(const std::string &entity_name);
-    void KeepTrackOfNewEntityAttribute(const std::string &entity_name, const std::string &attribute_name);
-
-    // NOTE: The following functions assume `constraint` and `constraint_list` to be created outside of
-    //       these functions and managed (e.g., freed) as well
-    void GetNewProvidedConstraint(RuleParser::SelectorIdentContext *const context,
-                                  rule_check_proto::Constraint *const constraint);
-    void GetNewWithinConstraint(antlr4::tree::TerminalNode *const terminal_node,
-                                rule_check_proto::Constraint *const constraint);
-    void GetNewWhereConstraint(RuleParser::BooleanExprContext *const context,
-                               std::vector<rule_check_proto::Constraint> *const constraint_list);
-    void GetNewWhereConstraint(RuleParser::ListExprContext *const context,
-                               rule_check_proto::Constraint *const constraint);
-
-    void CollectEntitySetFromAggregationExpr(RuleParser::AggregationExprContext *const context);
+    // record current context of rule
+    std::string curr_rule_name_;
 
 public:
-    EntityCollector(RequestContext *const request_context);
-    ~EntityCollector();
+    SymbolCollector() = default;
+    ~SymbolCollector();
 
     /* Data Member Getters */
-
     const std::vector<Entity> get_entity_list() const;
-    const std::vector<EntitySet> get_entity_set_list() const;
-    const std::map<std::string, Entity*>& get_initial_entity() const;
 
     RequestContext *const get_request_context();
 
-    const std::string &get_set_element_name(const std::string &set_name);
+private:
+    /* Internal Handler Member Functions */
+    void KeepTrackOfNewEntity(const std::string &entity_name, std::string &attribute_name, RuleLanguage::Type type);
+    void KeepTrackOfNewInstance(const std::string &instance_name, std::string &entity_name);
+    void KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::Expr* expr);
 
-    /* Overridden Visitor Member Functions for Traversing Rule Language Nodes */
+    void setCurrRuleName (std::string &rule_name);
 
-    // virtual antlrcpp::Any visitRoot(RuleParser::RootContext *context) = 0;
+    /* Functions used to generate semantic model */
+    
+    Instance* getInstance(std::string name, RuleLanguage::Type type);
+    Attribute* createAttribute(std::string name, RuleLanguage::Type type);
+    Entity* getEntity(std::string name);
 
-    // virtual antlrcpp::Any visitRegulationDecl(RuleParser::RegulationDeclContext *context) = 0;
+    Instance* handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type);
+    RuleLanguage::logicalExpr* handleLogicalExpr(RuleParser::LogicalExprContext *context);
+    RuleLanguage::booleanExpr* handleBooleanExpr(RuleParser::BooleanExprContext *context);
+    RuleLanguage::numberExpr* handleNumberExpr(RuleParser::NumberExprContext *context);
+    RuleLanguage::queryExpr* handleQueryExpr(RuleParser::QueryExprContext *context);
+    RuleLanguage::conditionExpr* handleConditionExpr(RuleParser::ConditionExprContext *context);
+    RuleLanguage::basicCondExpr* handleBasicCondExpr(RuleParser::BasicCondExprContext *context);
+    RuleLanguage::relationExpr* handleRelationExpr(RuleParser::RelationExprContext *context);
+    RuleLanguage::listExpr* handleListExpr(RuleParser::ListExprContext *context);
 
-    // virtual antlrcpp::Any visitEntitiesBlock(RuleParser::EntitiesBlockContext *context) = 0;
+    ExecuteRule* handleExecuteRuleDef(RuleParser::ExecuteRuleDefContext* context);
+    ExecuteRule* handleExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext* context);
+    ExecuteRule* handleExecutionFalseStmt(RuleParser::ExecutionFalseStmtContext* context);
 
-    // virtual antlrcpp::Any visitEntityList(RuleParser::EntityListContext *context) = 0;
+    ObjectAttribute* handleOutputObject(RuleParser::OutputObjectContext* context);
+    Attribute* handleOutputDecl(RuleParser::OutputDeclContext* context);
 
+    RuleLanguage::ArithmeticOperator getOperator(RuleParser::NumberExprContext* context);
+    RuleLanguage::LogicalOperator getLogicalOperator(RuleParser::LogicalOperatorContext *context);
+    RuleLanguage::RelationOperator getRelationOperator(RuleParser::RelationOperatorContext *context);
+    RuleLanguage::Type getAttributeTypeFromDef(RuleParser::TypeAnnoContext* context);
+
+    bool getQueryOperator(RuleParser::QueryExprContext *context, RuleLanguage::queryExpr *expr);
+    bool generateExecuteTree(RuleParser::ExecuteRuleDefContext* context);
+
+
+    
+
+public:
+    /* override function from RuleParser  */
+
+    // handle Entity block
     virtual antlrcpp::Any visitEntityDecl(RuleParser::EntityDeclContext *context) override;
 
-    // virtual antlrcpp::Any visitEntityName(RuleParser::EntityNameContext *context) = 0;
+    // handle input block
+    virtual antlrcpp::Any visitInputBlock(RuleParser::InputBlockContext *context) override;
 
-    // virtual antlrcpp::Any visitAttributeList(RuleParser::AttributeListContext *context) = 0;
+    // handle output block
+    virtual antlrcpp::Any visitOutputBlock(RuleParser::OutputBlockContext *context) override;
 
-    // virtual antlrcpp::Any visitAttributeDecl(RuleParser::AttributeDeclContext *context) = 0;
-
-    // virtual antlrcpp::Any visitAttributeName(RuleParser::AttributeNameContext *context) = 0;
-
-    // virtual antlrcpp::Any visitTypeAnno(RuleParser::TypeAnnoContext *context) = 0;
-
-    // virtual antlrcpp::Any visitBasicType(RuleParser::BasicTypeContext *context) = 0;
-
-    // virtual antlrcpp::Any visitCompositeType(RuleParser::CompositeTypeContext *context) = 0;
-
-    // virtual antlrcpp::Any visitSetType(RuleParser::SetTypeContext *context) = 0;
-
-    // virtual antlrcpp::Any visitRulesBlock(RuleParser::RulesBlockContext *context) = 0;
-
-    // virtual antlrcpp::Any visitRuleList(RuleParser::RuleListContext *context) = 0;
-
+    // handle rule block
     virtual antlrcpp::Any visitBasicRule(RuleParser::BasicRuleContext *context) override;
 
-    // virtual antlrcpp::Any visitRuleName(RuleParser::RuleNameContext *context) = 0;
-
-    // virtual antlrcpp::Any visitRuleStmtList(RuleParser::RuleStmtListContext *context) = 0;
-
-    // virtual antlrcpp::Any visitRuleStmt(RuleParser::RuleStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitSimpleStmt(RuleParser::SimpleStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitComplexStmt(RuleParser::ComplexStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitSetStmt(RuleParser::SetStmtContext *context) = 0;
-
-    virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *context) override;
-
-    // virtual antlrcpp::Any visitRelationStmt(RuleParser::RelationStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitRelationExpr(RuleParser::RelationExprContext *context) = 0;
-
-    virtual antlrcpp::Any visitNumberExpr(RuleParser::NumberExprContext *context) override;
-
-    // virtual antlrcpp::Any visitSelectorIdent(RuleParser::SelectorIdentContext *context) = 0;
-
-    virtual antlrcpp::Any visitAggregationExpr(RuleParser::AggregationExprContext *context) override;
-
-    virtual antlrcpp::Any visitBooleanExpr(RuleParser::BooleanExprContext *context) override;
-
-    // virtual antlrcpp::Any visitLogicalStmt(RuleParser::LogicalStmtContext *context) = 0;
+    virtual antlrcpp::Any visitDefinitionStmt(RuleParser::DefinitionStmtContext *context) override;
 
     virtual antlrcpp::Any visitLogicalExpr(RuleParser::LogicalExprContext *context) override;
 
-    // virtual antlrcpp::Any visitIfStmt(RuleParser::IfStmtContext *context) = 0;
+    virtual antlrcpp::Any visitRelationExpr(RuleParser::RelationExprContext *context) override;
 
-    // virtual antlrcpp::Any visitSequentialStmt(RuleParser::SequentialStmtContext *context) = 0;
+    // handle execution block
+    virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *context) override;
 
-    // virtual antlrcpp::Any visitSequentialExpr(RuleParser::SequentialExprContext *context) = 0;
-
-    // virtual antlrcpp::Any visitDateStmt(RuleParser::DateStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitDateExpr(RuleParser::DateExprContext *context) = 0;
-
-    // virtual antlrcpp::Any visitTimeStmt(RuleParser::TimeStmtContext *context) = 0;
-
-    // virtual antlrcpp::Any visitTimeExpr(RuleParser::TimeExprContext *context) = 0;
-
-    // virtual antlrcpp::Any visitEos(RuleParser::EosContext *context) = 0;
+    // TODO: support all kinds of expr  
+    // virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *context) override;
+    // virtual antlrcpp::Any visitAggregationExpr(RuleParser::AggregationExprContext *context) override;
 };

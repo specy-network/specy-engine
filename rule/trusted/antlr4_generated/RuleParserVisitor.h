@@ -27,6 +27,14 @@ public:
 
     virtual antlrcpp::Any visitOutputBlock(RuleParser::OutputBlockContext *context) = 0;
 
+    virtual antlrcpp::Any visitOutputDecl(RuleParser::OutputDeclContext *context) = 0;
+
+    virtual antlrcpp::Any visitOutputAttribute(RuleParser::OutputAttributeContext *context) = 0;
+
+    virtual antlrcpp::Any visitOutputObject(RuleParser::OutputObjectContext *context) = 0;
+
+    virtual antlrcpp::Any visitObjectName(RuleParser::ObjectNameContext *context) = 0;
+
     virtual antlrcpp::Any visitEntitiesBlock(RuleParser::EntitiesBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitEntityList(RuleParser::EntityListContext *context) = 0;
@@ -52,6 +60,8 @@ public:
     virtual antlrcpp::Any visitExecutionBlock(RuleParser::ExecutionBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitExecuteRuleDef(RuleParser::ExecuteRuleDefContext *context) = 0;
 
     virtual antlrcpp::Any visitExecutionTrueStmt(RuleParser::ExecutionTrueStmtContext *context) = 0;
 
@@ -81,6 +91,8 @@ public:
 
     virtual antlrcpp::Any visitRelationExpr(RuleParser::RelationExprContext *context) = 0;
 
+    virtual antlrcpp::Any visitRelationOperator(RuleParser::RelationOperatorContext *context) = 0;
+
     virtual antlrcpp::Any visitNumberExpr(RuleParser::NumberExprContext *context) = 0;
 
     virtual antlrcpp::Any visitSelectorIdent(RuleParser::SelectorIdentContext *context) = 0;
@@ -100,6 +112,12 @@ public:
     virtual antlrcpp::Any visitInstanceName(RuleParser::InstanceNameContext *context) = 0;
 
     virtual antlrcpp::Any visitQueryExpr(RuleParser::QueryExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitConditionExpr(RuleParser::ConditionExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitLogicalOperator(RuleParser::LogicalOperatorContext *context) = 0;
+
+    virtual antlrcpp::Any visitBasicCondExpr(RuleParser::BasicCondExprContext *context) = 0;
 
     virtual antlrcpp::Any visitExpr(RuleParser::ExprContext *context) = 0;
 

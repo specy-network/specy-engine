@@ -13,12 +13,6 @@ using namespace rule_check_proto;
 
 SymbolCollector::~SymbolCollector()
 {
-    // De-allocate collected entity pointers
-    for (const auto &entity_pair : this->entity_map_)
-    {
-        delete entity_pair.second;
-    }
-    this->entity_map_.clear();
 
 }
 
@@ -73,13 +67,15 @@ void SymbolCollector::KeepTrackOfNewEntity(const string &entity_name, string &at
         // NOTE: `entity` is deleted with `SymbolCollector` destructor
         Entity *entity = new Entity(entity_name);
         entity->setUnique(false);
-        entity->addAttribute(attribute_name, attribute);
-        this->entity_map_[entity_name] = entity;
+        std::shared_ptr<Attribute> attribute_ptr(attribute);
+        entity->addAttribute(attribute_name, attribute_ptr);
+        this->entity_map_[entity_name] = shared_ptr<Entity>(entity);
     }
     else
     {
-        Entity *entity = this->entity_map_[entity_name];
-        entity->addAttribute(attribute_name, attribute);
+        auto entity = this->entity_map_[entity_name];
+        std::shared_ptr<Attribute> attribute_ptr(attribute);
+        entity->addAttribute(attribute_name, attribute_ptr);
     }
 }
 
@@ -88,8 +84,7 @@ void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, s
                         instance_name + string(" related to ") +
                         entity_name).c_str(), __FILE__, __LINE__);
     if (instance_map_.find(instance_name) == instance_map_.end()) {
-        Instance* instance = new Instance(instance_name);
-
+        shared_ptr<Instance> instance(new Instance(instance_name));
         if (!entity_name.empty()) {
             instance->setUniqueEntityName(entity_name);
             instance->addAttributes(entity_map_[entity_name]->get_attribute_list());
@@ -109,7 +104,7 @@ void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, R
     auto instance_map = rule_instance_map_[curr_rule_name_];
     
     if (instance_map.find(instance_name) == instance_map.end()) {
-        Instance* instance = new Instance(instance_name);
+        shared_ptr<Instance> instance(new Instance(instance_name));
         instance->setExpr(expr);
         instance_map.insert({instance_name, instance});
     } else {
@@ -153,13 +148,10 @@ antlrcpp::Any SymbolCollector::visitBasicRule(RuleParser::BasicRuleContext *cont
     setCurrRuleName(rule_name);
     InstanceMap m;
     rule_instance_map_[rule_name] = m;
-    RuleStmts s;
-    rule_stmt_map_[rule_name] = s;
-
     return nullptr;
 }
 
-Instance* SymbolCollector::handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type) {
+shared_ptr<Instance> SymbolCollector::handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type) {
 
     string instance_name = context->entityName()->getText();
     string attribute_name = context->attributeName()->getText();
@@ -378,7 +370,7 @@ bool SymbolCollector::getQueryOperator(RuleParser::QueryExprContext *context, Ru
     return true;
 }
 
-Instance* SymbolCollector::getInstance(string name, RuleLanguage::Type type ) {
+shared_ptr<Instance> SymbolCollector::getInstance(string name, RuleLanguage::Type type ) {
     if (instance_map_.find(name) == instance_map_.end()) {
         return nullptr;
     }
@@ -389,7 +381,7 @@ Instance* SymbolCollector::getInstance(string name, RuleLanguage::Type type ) {
     return instance;
 }
 
-Entity* SymbolCollector::getEntity(string name) {
+shared_ptr<Entity> SymbolCollector::getEntity(string name) {
     if (entity_map_.find(name) == entity_map_.end()) {
         return nullptr;
     }
@@ -596,18 +588,16 @@ antlrcpp::Any SymbolCollector::visitDefinitionStmt(RuleParser::DefinitionStmtCon
 antlrcpp::Any SymbolCollector::visitLogicalExpr(RuleParser::LogicalExprContext *context)
 {
     auto expr = handleLogicalExpr(context);
-    auto rule_stmt_list = rule_stmt_map_[curr_rule_name_];
-    rule_stmt_list.push_back(expr);
-
+    unique_ptr<RuleLanguage::Expr> expr_ptr(expr);
+    rule_stmt_map_[curr_rule_name_].push_back(std::move(expr_ptr));
     return nullptr;
 }
 
 antlrcpp::Any SymbolCollector::visitRelationExpr(RuleParser::RelationExprContext *context)
 {
     auto expr = handleRelationExpr(context);
-    auto rule_stmt_list = rule_stmt_map_[curr_rule_name_];
-    rule_stmt_list.push_back(expr);
-
+    unique_ptr<RuleLanguage::Expr> expr_ptr(expr);
+    rule_stmt_map_[curr_rule_name_].push_back(std::move(expr_ptr));
     return nullptr;
 }
 
@@ -698,7 +688,7 @@ bool SymbolCollector::generateExecuteTree(RuleParser::ExecuteRuleDefContext* con
 antlrcpp::Any SymbolCollector::visitExecutionStmt(RuleParser::ExecutionStmtContext *context) {
     auto ruleDef = context->executeRuleDef();
 
-    execute_root = new ExecuteRule();
+    unique_ptr<ExecuteRule> execute_root(new ExecuteRule());
     execute_root->rule_name = ruleDef->ruleName()->getText();
     generateExecuteTree(ruleDef);
 
@@ -711,12 +701,14 @@ antlrcpp::Any SymbolCollector::visitInputBlock(RuleParser::InputBlockContext *co
         return nullptr;
     }
 
-    input_instance_ = new Instance("input");
+    input_instance_.reset(new Instance("input"));
 
     for (auto attribute : attributes) {
         auto attribute_name = attribute->attributeName()->getText();
         auto attribute_type = getAttributeTypeFromDef(attribute->typeAnno());
-        input_instance_->addAttribute(attribute_name, createAttribute(attribute_name, attribute_type));
+        auto attribute_raw_ptr = createAttribute(attribute_name, attribute_type);
+        shared_ptr<Attribute>attribute_ptr(attribute_raw_ptr);
+        input_instance_->addAttribute(attribute_name, attribute_ptr);
     }
 
     return nullptr;
@@ -728,7 +720,7 @@ ObjectAttribute* SymbolCollector::handleOutputObject(RuleParser::OutputObjectCon
     auto instance_value = new Instance(object_name);
 
     for (auto decl : decls) {
-        auto decl_attribute = handleOutputDecl(decl);
+        shared_ptr<Attribute> decl_attribute(handleOutputDecl(decl));
         if (decl_attribute == nullptr) {
             ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
             return nullptr;
@@ -756,7 +748,7 @@ Attribute* SymbolCollector::handleOutputDecl(RuleParser::OutputDeclContext* cont
 
 antlrcpp::Any SymbolCollector::visitOutputBlock(RuleParser::OutputBlockContext *context) {
     auto output_decls = context->outputDecl();
-    output_instance_ = new Instance("output");
+    shared_ptr<Instance> output_instance_(new Instance("output"));
 
     for (auto output_decl : output_decls) {
         auto attribute = handleOutputDecl(output_decl);
@@ -764,7 +756,8 @@ antlrcpp::Any SymbolCollector::visitOutputBlock(RuleParser::OutputBlockContext *
             ocall_print_string((string("Error: illegal syntax! ")).c_str(), __FILE__, __LINE__);
             return nullptr;
         }
-        output_instance_->addAttribute(attribute->getName(), attribute);
+        shared_ptr<Attribute> attribute_ptr(attribute);
+        output_instance_->addAttribute(attribute->getName(), attribute_ptr);
     }
 
     return nullptr;

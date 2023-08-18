@@ -80,18 +80,18 @@ class numberExpr : public Expr {
         }
 
         void setLeftExpr(numberExpr* expr) {
-            left_expr = expr;
+            left_expr.reset(expr);
         }
 
         void setRightExpr(numberExpr* expr) {
-            right_expr = expr;
+            right_expr.reset(expr);
         }
 
         void setValue(int64_t value) {
             this->value = value;
         }
 
-        void setInstance(Instance* instance) {
+        void setInstance(std::shared_ptr<Instance>& instance) {
             this->instance = instance;
         }
 
@@ -100,17 +100,17 @@ class numberExpr : public Expr {
         /* TODO: use big number to instead*/
         int64_t value;
         ArithmeticOperator operand;
-        numberExpr *left_expr;
-        numberExpr *right_expr;
-        Instance* instance;
+        std::unique_ptr<numberExpr> left_expr;
+        std::unique_ptr<numberExpr> right_expr;
+        std::shared_ptr<Instance> instance;
 };
 
 class booleanExpr : public Expr {
     
     private:
-        Expr* expr;
+        std::unique_ptr<Expr> expr;
         bool literalValue;
-        Instance* instance;
+        std::shared_ptr<Instance> instance;
     
     public:
         booleanExpr() = default;
@@ -124,10 +124,10 @@ class booleanExpr : public Expr {
         }
 
         void setExpr(Expr* expr) {
-            this->expr = expr;
+            this->expr.reset(expr);
         }
 
-        void setInstance(Instance* instance) {
+        void setInstance(std::shared_ptr<Instance> instance) {
             this->instance = instance;
         }
 };
@@ -145,29 +145,29 @@ class logicalExpr : public Expr {
         }
 
         void setLeftExpr(Expr* expr) {
-            left_expr = expr;
+            left_expr.reset(expr);
         }
 
         void setRightExpr(Expr* expr) {
-            right_expr = expr;
+            right_expr.reset(expr);
         }
 
         void setBooleanExpr(booleanExpr* expr) {
-            boolean_expr = expr;
+            boolean_expr.reset(expr);
         }
 
     private:
         LogicalOperator operand;
-        booleanExpr* boolean_expr;
-        Expr* left_expr;
-        Expr* right_expr;
+        std::unique_ptr<booleanExpr> boolean_expr;
+        std::unique_ptr<Expr> left_expr;
+        std::unique_ptr<Expr> right_expr;
 };
 
 
 class relationExpr : public Expr {
     private:
-        numberExpr* first_expr;
-        std::vector<numberExpr*> numbers;
+        std::unique_ptr<numberExpr> first_expr;
+        std::vector<std::unique_ptr<numberExpr>> numbers;
         std::vector<RelationOperator> operators;
 
     public:
@@ -178,11 +178,12 @@ class relationExpr : public Expr {
         }
 
         void setFirstExpr(numberExpr* expr) {
-            first_expr = expr;
+            first_expr.reset(expr);
         }
 
         void addNumberExpr(numberExpr* expr) {
-            numbers.push_back(expr);
+            std::unique_ptr<numberExpr> expr_ptr(expr);
+            numbers.push_back(std::move(expr_ptr));
         }
 
         void addOperator(RelationOperator op) {
@@ -196,8 +197,8 @@ class listExpr : public Expr {
 
 class basicCondExpr : public Expr {
     private:
-        relationExpr* rExpr;
-        listExpr* lExpr;
+        std::unique_ptr<relationExpr> rExpr;
+        std::unique_ptr<listExpr> lExpr;
         LogicalOperator operand;
     public:
         basicCondExpr() = default;
@@ -207,11 +208,11 @@ class basicCondExpr : public Expr {
         }
 
         void setListExpr(listExpr* expr) {
-            lExpr = expr;
+            lExpr.reset(expr);
         }
 
         void setRelationExpr(relationExpr* expr) {
-            rExpr = expr;
+            rExpr.reset(expr);
         }
 
         void setOperator(LogicalOperator op) {
@@ -222,8 +223,8 @@ class basicCondExpr : public Expr {
 
 class conditionExpr : public Expr {
     private:
-        basicCondExpr* basic_expr;
-        std::vector<basicCondExpr*> basicExprs;
+        std::unique_ptr<basicCondExpr> basic_expr;
+        std::vector<std::unique_ptr<basicCondExpr>> basicExprs;
 
     public:
         conditionExpr() = default;
@@ -233,11 +234,12 @@ class conditionExpr : public Expr {
         }
 
         void setBasicExpr(basicCondExpr* expr) {
-            basic_expr = expr;
+            basic_expr.reset(expr);
         }
 
         void addExpr(basicCondExpr* expr) {
-            basicExprs.push_back(expr);
+            std::unique_ptr<basicCondExpr> expr_ptr(expr);
+            basicExprs.push_back(std::move(expr_ptr));
         }
 };
 
@@ -246,9 +248,13 @@ class queryExpr : public Expr {
     private:
         bool sellect;
         bool collect;
-        Instance* instance;
-        Entity* entity;
-        conditionExpr* expr;
+        // Instance* instance;
+        // Entity* entity;
+        // conditionExpr* expr;
+
+        std::shared_ptr<Instance> instance;
+        std::shared_ptr<Entity> entity;
+        std::unique_ptr<conditionExpr> expr;
     
     public:
         queryExpr() = default;
@@ -265,16 +271,16 @@ class queryExpr : public Expr {
             collect = value;
         }
 
-        void setInstance(Instance* instance) {
+        void setInstance(std::shared_ptr<Instance>& instance) {
             this->instance = instance;
         }
 
-        void setEntity(Entity* entity) {
+        void setEntity(std::shared_ptr<Entity>& entity) {
             this->entity = entity;
         }
 
         void setExpr(conditionExpr* expr) {
-            this->expr = expr;
+            this->expr.reset(expr);
         }
 
 };

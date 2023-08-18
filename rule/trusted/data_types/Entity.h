@@ -14,7 +14,7 @@ class Entity : public EntityType {
    private:
     std::string id_;  // we use entity name as its id, i.e., id_ = name_
     std::string name_;
-    std::map<std::string, Attribute*> attribute_list;
+    std::map<std::string, std::shared_ptr<Attribute>> attribute_list;
     std::set<std::string> constraints_;
     bool unique;
 
@@ -27,7 +27,7 @@ class Entity : public EntityType {
 
     const std::string &get_id() const;
     const std::string &get_name() const;
-    const std::map<std::string, Attribute*>& get_attribute_list() const;
+    const std::map<std::string, std::shared_ptr<Attribute>>& get_attribute_list() const;
     const std::set<std::string> &get_constraints_set() const;
 
     const std::string toJSONString() const;
@@ -35,7 +35,7 @@ class Entity : public EntityType {
     void setUnique(bool value);
     bool isUnique();
 
-    void addAttribute(const std::string &attribute_name, Attribute* attribute);
+    void addAttribute(const std::string &attribute_name, std::shared_ptr<Attribute>& attribute);
     void addConstraint(const std::string &attribute_name);
     void clearAttributes();
 

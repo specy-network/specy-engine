@@ -32,8 +32,8 @@
 
 // `SymbolCollector` extends BaseVisitor with additional utility functions
 
-using InstanceMap = std::map<std::string, Instance*>;
-using RuleStmts = std::vector<RuleLanguage::Expr*>;
+using InstanceMap = std::map<std::string, std::shared_ptr<Instance>>;
+using RuleStmts = std::vector<std::unique_ptr<RuleLanguage::Expr>>;
 
 class ExecuteRule {
     public:
@@ -55,15 +55,14 @@ class SymbolCollector : public BaseVisitor
 {
 private:
     // map from entity name (aka id) to entity request
-    std::map<std::string, Entity *> entity_map_;
+    std::map<std::string, std::shared_ptr<Entity>> entity_map_;
     InstanceMap instance_map_;
     std::map<std::string, InstanceMap> rule_instance_map_;
     std::map<std::string, RuleStmts> rule_stmt_map_;
 
-    ExecuteRule* execute_root;
-
-    Instance* input_instance_;
-    Instance* output_instance_;
+    std::unique_ptr<ExecuteRule> execute_root;
+    std::shared_ptr<Instance> input_instance_;
+    std::shared_ptr<Instance> output_instance_;
 
     // record current context of rule
     std::string curr_rule_name_;
@@ -87,11 +86,11 @@ private:
 
     /* Functions used to generate semantic model */
     
-    Instance* getInstance(std::string name, RuleLanguage::Type type);
-    Attribute* createAttribute(std::string name, RuleLanguage::Type type);
-    Entity* getEntity(std::string name);
+    std::shared_ptr<Instance> getInstance(std::string name, RuleLanguage::Type type);
+    std::shared_ptr<Entity> getEntity(std::string name);
+    std::shared_ptr<Instance> handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type);
 
-    Instance* handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type);
+    Attribute*  createAttribute(std::string name, RuleLanguage::Type type);
     RuleLanguage::logicalExpr* handleLogicalExpr(RuleParser::LogicalExprContext *context);
     RuleLanguage::booleanExpr* handleBooleanExpr(RuleParser::BooleanExprContext *context);
     RuleLanguage::numberExpr* handleNumberExpr(RuleParser::NumberExprContext *context);

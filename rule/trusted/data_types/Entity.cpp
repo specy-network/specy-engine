@@ -27,11 +27,11 @@ const string Entity::toJSONString() const {
     return entity_json.dump();
 }
 
-void Entity::addAttribute(const string &attribute_name, Attribute* attribute) {
+void Entity::addAttribute(const string &attribute_name, shared_ptr<Attribute>& attribute) {
     attribute_list.insert({attribute_name, attribute});
 }
 
-const std::map<std::string, Attribute*>& Entity::get_attribute_list() const {
+const std::map<std::string, shared_ptr<Attribute>>& Entity::get_attribute_list() const {
     return attribute_list;
 }
 

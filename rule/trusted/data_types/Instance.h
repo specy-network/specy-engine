@@ -70,16 +70,18 @@ class StringAttribute : public Attribute {
 
 class ObjectAttribute : public Attribute {
     private:
-        Instance* instance_value;
+        std::unique_ptr<Instance> instance_value;
     
     public:
         ObjectAttribute() = default;
         ObjectAttribute(std::string name, RuleLanguage::Type type) : Attribute(name, type) {}
-        ObjectAttribute(std::string name, RuleLanguage::Type type, Instance* value) : Attribute(name, type), instance_value(value) {}
+        ObjectAttribute(std::string name, RuleLanguage::Type type, Instance* value) : Attribute(name, type) {
+            instance_value.reset(value);
+        }
         ~ObjectAttribute() = default;
 
         Instance* value() {
-            return instance_value;
+            return instance_value.get();
         }
 };
 
@@ -87,17 +89,15 @@ class Instance {
 
     private:
         std::string name;
-        RuleLanguage::Expr* expr;
+        std::unique_ptr<RuleLanguage::Expr> expr;
         std::string unique_entity_name;
-        std::map<std::string, Attribute*> attribute_list;
+        std::map<std::string, std::shared_ptr<Attribute>> attribute_list;
 
     public:
         Instance() = default;
         Instance(const std::string& instanceName) : name(instanceName) {}
 
-        ~Instance() {
-            delete(expr);
-        }
+        ~Instance() = default;
 
         RuleLanguage::Type type() {
             if (expr != nullptr) {
@@ -114,18 +114,18 @@ class Instance {
         }
 
         void setExpr(RuleLanguage::Expr* expr) {
-            this->expr = expr;
+            this->expr.reset(expr);
         }
 
         void setUniqueEntityName(std::string& name) {
             unique_entity_name = name;
         }
 
-        void addAttributes(const std::map<std::string, Attribute*>& attributes) {
+        void addAttributes(const std::map<std::string, std::shared_ptr<Attribute>>& attributes) {
             attribute_list.insert(attributes.begin(), attributes.end());
         }
 
-        void addAttribute(std::string name, Attribute* attribute) {
+        void addAttribute(std::string name, std::shared_ptr<Attribute>& attribute) {
             attribute_list[name] = attribute;
         }
 

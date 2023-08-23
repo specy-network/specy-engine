@@ -71,6 +71,35 @@ void GenerateQuerySentences (const string& rule_text, vector<string>& sentences)
 // EvaluateRule is used to regulate transaction with rules
 RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_context)
 {
+    ocall_print_string("enter EvaluateRule", __FILE__, __LINE__);
+
+    RuleEnclaveStatus status_code = RuleEnclaveStatus::kOK;
     
+    ocall_print_string("parse rule text", __FILE__, __LINE__);
+    // build a parse tree from requested rule text
+    ANTLRInputStream input(request_context->get_rule_text());
+    RuleLexer lexer(&input);
+    CommonTokenStream tokens(&lexer);
+    // print out lexer parsed tokens
+    tokens.fill();
+    uint64_t counter = 0;
+    ocall_print_string("traverse tokens", __FILE__, __LINE__);
+    for (const auto &token : tokens.getTokens())
+    {
+        ocall_print_string((string("token at pos ") +
+                            to_string(counter++) +
+                            string(": ") + token->toString()).c_str(), __FILE__, __LINE__);
+    }
+
+    RuleParser parser(&tokens);
+    auto tree = parser.root();
+
+    // visit AST by SymbolCollector
+    SymbolCollector entity_collector; // rule language visitor
+    tree->accept(&entity_collector);
+
+    entity_collector.dump();
+
+
     return RuleEnclaveStatus::kOK;
 }

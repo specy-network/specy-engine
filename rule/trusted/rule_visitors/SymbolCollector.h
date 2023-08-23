@@ -49,6 +49,12 @@ class ExecuteRule {
                 delete(false_branch);
             }
         }
+
+        std::string dump() {
+            auto true_rule_name = true_branch == nullptr ? "" : true_branch->dump();
+            auto false_rule_name = false_branch == nullptr ? "" : false_branch->dump();
+            return rule_name + ": \n " + "true : " + true_rule_name + "\n false: " + false_rule_name;
+        }
 };
 
 class SymbolCollector : public BaseVisitor
@@ -57,6 +63,9 @@ private:
     // map from entity name (aka id) to entity request
     std::map<std::string, std::shared_ptr<Entity>> entity_map_;
     InstanceMap instance_map_;
+
+    // TODO : For now, we did not order instance and rule stmt in one map.
+    // so, for now, we seperate rule with data preparation part(rule_instance_map) and logic part(rul_stmt_map_)
     std::map<std::string, InstanceMap> rule_instance_map_;
     std::map<std::string, RuleStmts> rule_stmt_map_;
 
@@ -73,20 +82,24 @@ public:
 
     /* Data Member Getters */
     const std::vector<Entity> get_entity_list() const;
-
     RequestContext *const get_request_context();
+    void dump();
 
 private:
     /* Internal Handler Member Functions */
     void KeepTrackOfNewEntity(const std::string &entity_name, std::string &attribute_name, RuleLanguage::Type type);
     void KeepTrackOfNewInstance(const std::string &instance_name, std::string &entity_name);
     void KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::Expr* expr);
+    void KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::queryExpr* expr);
+
 
     void setCurrRuleName (std::string &rule_name);
 
     /* Functions used to generate semantic model */
     
     std::shared_ptr<Instance> getInstance(std::string name, RuleLanguage::Type type);
+    std::shared_ptr<Instance> getCurrRuleInstance(std::string name, RuleLanguage::Type type );
+
     std::shared_ptr<Entity> getEntity(std::string name);
     std::shared_ptr<Instance> handleSelectorIdent(RuleParser::SelectorIdentContext *context, RuleLanguage::Type type);
 
@@ -141,6 +154,7 @@ public:
 
     // handle execution block
     virtual antlrcpp::Any visitExecutionStmt(RuleParser::ExecutionStmtContext *context) override;
+    virtual antlrcpp::Any visitExecutionBlock(RuleParser::ExecutionBlockContext *context) override;
 
     // TODO: support all kinds of expr  
     // virtual antlrcpp::Any visitListExpr(RuleParser::ListExprContext *context) override;

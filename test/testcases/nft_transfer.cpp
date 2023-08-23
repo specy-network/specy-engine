@@ -9,7 +9,7 @@ string TestTaskHash_0elements = "0x1000";
 string TestTaskHash_4elements = "0x1004";
 
 string TestTaskRule_0elements = "regulation nft_reward entities { entity interchainnft {hash  sender  receiver  class_id  tocken_id  timestamp }  entity reward_list0 { token_id } } rules { rule nft_white_list { count on interchainnft where interchainnft.token_id in reward_list0 after 2023-01-01T00:00:00+08:00 within 1 days } }";
-string TestTaskRule_4elements = R"(regulation nft_reward entities { entity interchainnft {hash  sender  receiver  class_id  tocken_id  timestamp }  entity reward_list4 { token_id } } rules { rule nft_white_list { count on interchainnft where interchainnft.token_id in reward_list4 after 2023-01-01T00:00:00+08:00 within 1 days } })";
+string TestTaskRule_4elements = R"(task erc20  entities taska {         entity PoolData {                 pool is number                                         centerHead is number                 centerTail is number         }                  entity BatchOrder {                 orderId is number                 direction is boolean                 tickUpper is number                 tickLower is number         }                  entity PoolSlot0 {       pool is number          tick is number         }                  entity block {                 timestamp is number         } }  input {         pool is number }  output {         pool is number         walkDirection is number         deadline is number }  rules {          rule checkCenterHeadITM {                 poolData = select PoolData where PoolData.pool == inputdata.pool                 poolSlot0 = select PoolSlot0 where PoolSlot0.pool == inputdata.pool                 order = select BatchOrder where BatchOrder.orderId == poolData.centerHead                 order.direction && poolSlot0.tick > order.tickUpper           }                  rule checkCenterTailITM {                 poolData =select PoolData where PoolData.pool == inputdata.pool                 poolSlot0 = select PoolSlot0 where PoolSlot0.pool == inputdata.pool                 order = select BatchOrder where BatchOrder.orderId == poolData.centerTail                 order.direction && poolSlot0.tick < order.tickUpper     } }  execute {         check rule checkCenterHeadITM  false : checkCenterTailITM})";
 
 string TestTaskRewardList_0elements = "";
 string TestTaskRewardList_4elements = "";
@@ -29,6 +29,7 @@ void InitMockDataBase_NFT_0elements(MockDatabase_NFT& mockDatabase) {
 
 void InitMockDataBase_NFT_4elements(MockDatabase_NFT& mockDatabase) {
     mockDatabase.insertTask("0x307831303034", TestTaskRule_4elements);
+    mockDatabase.insertTask("0x1004", TestTaskRule_4elements);
 }
 
 std::string MockDatabase_NFTlist::handleQuery(std::string& query, std::string& target){
@@ -47,6 +48,7 @@ std::string MockDatabase_NFTlist::handleQuery(std::string& query, std::string& t
 }
 
 bool MockDatabase_NFTlist::matchDatabase (std::string& target) {
+    cout << "match database: " << target << endl; 
     if (target.compare("ics721") == 0)
         return true;
     if (target.compare("rewards") == 0)

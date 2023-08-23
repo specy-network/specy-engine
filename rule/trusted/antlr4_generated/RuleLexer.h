@@ -12,7 +12,7 @@
 class  RuleLexer : public antlr4::Lexer {
 public:
   enum {
-    TASK = 1, ENTITIES = 2, RULES = 3, INPUT = 4, OUTPUT = 5, EXECUTION = 6, 
+    TASK = 1, ENTITIES = 2, RULES = 3, INPUT = 4, OUTPUT = 5, EXECUTE = 6, 
     REFERENCES = 7, ENTITY = 8, UNIQUE = 9, ARTICLE = 10, RULE = 11, NUMBER = 12, 
     STRING = 13, BOOLEAN = 14, DATE = 15, SET = 16, LIST = 17, YEAR = 18, 
     MONTH = 19, DAY = 20, HOUR = 21, MINUTE = 22, SECOND = 23, ALIAS = 24, 

@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Instance.h"
 
 using namespace std;
 using namespace json11;
@@ -64,15 +65,16 @@ string Entity::dump() {
     string entity_string;
 
     entity_string += this->get_name();
-    entity_string += "[";
+    entity_string += "{ \n";
     uint64_t counter = 0;
-    // for (const auto &attribute : this->get_attribute_set()) {
-    //     if (counter++ > 0) {
-    //         entity_string += ", ";
-    //     }
-    //     entity_string += attribute;
-    // }
+    for (auto attribute : get_attribute_list()) {
+        entity_string += attribute.second->dump() ;
+    }
 
-    entity_string += "]";
+    entity_string += "} \n";
     return entity_string;
+}
+
+bool Entity::hasAttribute(string& attribute_name, RuleLanguage::Type type) {
+    return attribute_list.find(attribute_name) != attribute_list.end() && attribute_list[attribute_name]->isAttributeType(type);
 }

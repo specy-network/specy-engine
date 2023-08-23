@@ -12,7 +12,7 @@
 class  RuleParser : public antlr4::Parser {
 public:
   enum {
-    TASK = 1, ENTITIES = 2, RULES = 3, INPUT = 4, OUTPUT = 5, EXECUTION = 6, 
+    TASK = 1, ENTITIES = 2, RULES = 3, INPUT = 4, OUTPUT = 5, EXECUTE = 6, 
     REFERENCES = 7, ENTITY = 8, UNIQUE = 9, ARTICLE = 10, RULE = 11, NUMBER = 12, 
     STRING = 13, BOOLEAN = 14, DATE = 15, SET = 16, LIST = 17, YEAR = 18, 
     MONTH = 19, DAY = 20, HOUR = 21, MINUTE = 22, SECOND = 23, ALIAS = 24, 
@@ -456,7 +456,7 @@ public:
   public:
     ExecutionBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *EXECUTION();
+    antlr4::tree::TerminalNode *EXECUTE();
     antlr4::tree::TerminalNode *L_CURLY();
     ExecutionStmtContext *executionStmt();
     antlr4::tree::TerminalNode *R_CURLY();
@@ -477,6 +477,7 @@ public:
     antlr4::tree::TerminalNode *CHECK();
     antlr4::tree::TerminalNode *RULE();
     ExecuteRuleDefContext *executeRuleDef();
+    RuleNameContext *ruleName();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -509,7 +510,7 @@ public:
     ExecutionTrueStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TRUE();
-    antlr4::tree::TerminalNode *COMMA();
+    antlr4::tree::TerminalNode *COLON();
     RuleNameContext *ruleName();
     ExecuteRuleDefContext *executeRuleDef();
 
@@ -527,7 +528,7 @@ public:
     ExecutionFalseStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *FALSE();
-    antlr4::tree::TerminalNode *COMMA();
+    antlr4::tree::TerminalNode *COLON();
     RuleNameContext *ruleName();
     ExecuteRuleDefContext *executeRuleDef();
 

@@ -5,6 +5,14 @@
 
 class Instance;
 
+enum InstanceKind {
+    EXPR = 0,
+    UNIQUE_ENTITY,
+    SYMBOL,
+    SPECIFIC_ATTRIBUTE,
+    INSTANCE_NON
+};
+
 class Attribute {
     private:
         std::string name;
@@ -20,6 +28,10 @@ class Attribute {
 
         std::string getName() {
             return name;
+        }
+
+        virtual std::string dump() {
+            return name + " is " + RuleLanguage::TypeToString(type) + "\n";
         }
 };
 
@@ -83,6 +95,8 @@ class ObjectAttribute : public Attribute {
         Instance* value() {
             return instance_value.get();
         }
+
+        std::string dump() override;
 };
 
 class Instance {
@@ -92,12 +106,18 @@ class Instance {
         std::unique_ptr<RuleLanguage::Expr> expr;
         std::string unique_entity_name;
         std::map<std::string, std::shared_ptr<Attribute>> attribute_list;
+        InstanceKind instance_kind;
+        RuleLanguage::Type instance_type;
 
     public:
         Instance() = default;
-        Instance(const std::string& instanceName) : name(instanceName) {}
+        Instance(const std::string& instanceName) : name(instanceName), instance_kind(InstanceKind::INSTANCE_NON) {}
 
         ~Instance() = default;
+
+        std::string getName() {
+            return name;
+        }
 
         RuleLanguage::Type type() {
             if (expr != nullptr) {
@@ -107,6 +127,16 @@ class Instance {
             if (!unique_entity_name.empty()) {
                 return RuleLanguage::Type::INSTANCE;
             }
+
+            return instance_type;
+        }
+
+        InstanceKind getInstanceType() {
+            return instance_kind;
+        }
+
+        void setInstanceKind(InstanceKind type) {
+            this->instance_kind = type;
         }
 
         bool isUniqueEntityInstance() {
@@ -125,8 +155,12 @@ class Instance {
             attribute_list.insert(attributes.begin(), attributes.end());
         }
 
-        void addAttribute(std::string name, std::shared_ptr<Attribute>& attribute) {
+        void addAttribute(std::string name, std::shared_ptr<Attribute> attribute) {
             attribute_list[name] = attribute;
+        }
+
+        void setType(RuleLanguage::Type type) {
+            this->instance_type = type;
         }
 
         bool hasAttribute(const std::string attribute_name, RuleLanguage::Type type) {
@@ -139,5 +173,16 @@ class Instance {
             return false;
         }
 
+        std::string dump();
+        std::shared_ptr<Attribute> getAttribute(const std::string attribute_name, RuleLanguage::Type type) {
+            if (hasAttribute(attribute_name, type)) {
+                return attribute_list[attribute_name];
+            }
+            return nullptr;
+        }
+
+        const std::map<std::string, std::shared_ptr<Attribute>>& get_attribute_list() const {
+            return attribute_list;
+        }
 
 };

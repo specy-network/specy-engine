@@ -99,7 +99,10 @@ RuleEnclaveStatus get_rulefile_content(const string& request_id,
     //     return RuleEnclaveStatus::kEntity_Query_Rulefile_error;
     // }
 
-    Json rule_text = query_result["task"]["rule_file"];
+    RULE_INFO_STRING(query_result.dump());
+
+    // TODO: handle response data
+    Json rule_text = query_result["data"]["tasks"][0]["rule_file"];
     rule_content = rule_text.string_value();
     RULE_INFO_STRING("Rule Enclave: get rulefile text");
     RULE_INFO_STRING(rule_content);

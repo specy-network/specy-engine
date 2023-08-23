@@ -6,6 +6,7 @@
 
 class Instance;
 class Entity;
+class Attribute;
 
 namespace RuleLanguage
 {
@@ -57,13 +58,14 @@ class Expr {
         Expr() = default;
         ~Expr() = default;
         virtual Type type() = 0;
+        virtual std::string dump() = 0;
 };
 
 class numberExpr : public Expr {
     public:
         numberExpr() = default;
         ~numberExpr() = default;
-        Type type() {
+        Type type() override {
             return Type::NUMBER;
         }
 
@@ -76,7 +78,7 @@ class numberExpr : public Expr {
         }
 
         void setOperator(ArithmeticOperator op) {
-            operand = op;
+            arith_operator = op;
         }
 
         void setLeftExpr(numberExpr* expr) {
@@ -95,74 +97,17 @@ class numberExpr : public Expr {
             this->instance = instance;
         }
 
+        std::string dump() override;
+
     private:
         bool negative;
         /* TODO: use big number to instead*/
         int64_t value;
-        ArithmeticOperator operand;
+        ArithmeticOperator arith_operator;
         std::unique_ptr<numberExpr> left_expr;
         std::unique_ptr<numberExpr> right_expr;
         std::shared_ptr<Instance> instance;
 };
-
-class booleanExpr : public Expr {
-    
-    private:
-        std::unique_ptr<Expr> expr;
-        bool literalValue;
-        std::shared_ptr<Instance> instance;
-    
-    public:
-        booleanExpr() = default;
-        ~booleanExpr() = default;
-        Type type() {
-            return Type::BOOLEAN;
-        }
-
-        void setValue(bool value) {
-            literalValue = value;
-        }
-
-        void setExpr(Expr* expr) {
-            this->expr.reset(expr);
-        }
-
-        void setInstance(std::shared_ptr<Instance> instance) {
-            this->instance = instance;
-        }
-};
-
-class logicalExpr : public Expr {
-    public:
-        logicalExpr() = default;
-        ~logicalExpr() = default;
-        Type type() {
-            return Type::BOOLEAN;
-        }
-
-        void setOperator(LogicalOperator op) {
-            operand = op;
-        }
-
-        void setLeftExpr(Expr* expr) {
-            left_expr.reset(expr);
-        }
-
-        void setRightExpr(Expr* expr) {
-            right_expr.reset(expr);
-        }
-
-        void setBooleanExpr(booleanExpr* expr) {
-            boolean_expr.reset(expr);
-        }
-
-    private:
-        LogicalOperator operand;
-        std::unique_ptr<booleanExpr> boolean_expr;
-        std::unique_ptr<Expr> left_expr;
-        std::unique_ptr<Expr> right_expr;
-};
-
 
 class relationExpr : public Expr {
     private:
@@ -173,6 +118,7 @@ class relationExpr : public Expr {
     public:
         relationExpr() = default;
         ~relationExpr() = default;
+        std::string dump() override;
         Type type() {
             return Type::BOOLEAN;
         }
@@ -195,14 +141,76 @@ class listExpr : public Expr {
 
 };
 
+class booleanExpr : public Expr {
+    
+    private:
+        std::unique_ptr<Expr> expr;
+        bool literalValue;
+        std::shared_ptr<Instance> instance;
+    
+    public:
+        booleanExpr() = default;
+        ~booleanExpr() = default;
+        std::string dump() override;
+        Type type() {
+            return Type::BOOLEAN;
+        }
+
+        void setValue(bool value) {
+            literalValue = value;
+        }
+
+        void setExpr(Expr* expr) {
+            this->expr.reset(expr);
+        }
+
+        void setInstance(std::shared_ptr<Instance> instance) {
+            this->instance = instance;
+        }
+};
+
+class logicalExpr : public Expr {
+    public:
+        logicalExpr() = default;
+        ~logicalExpr() = default;
+        std::string dump() override;
+        Type type() {
+            return Type::BOOLEAN;
+        }
+
+        void setOperator(LogicalOperator op) {
+            logical_operator = op;
+        }
+
+        void setLeftExpr(Expr* expr) {
+            left_expr.reset(expr);
+        }
+
+        void setRightExpr(Expr* expr) {
+            right_expr.reset(expr);
+        }
+
+        void setBooleanExpr(booleanExpr* expr) {
+            boolean_expr.reset(expr);
+        }
+
+    private:
+        LogicalOperator logical_operator;
+        std::unique_ptr<booleanExpr> boolean_expr;
+        std::unique_ptr<Expr> left_expr;
+        std::unique_ptr<Expr> right_expr;
+};
+
+
 class basicCondExpr : public Expr {
     private:
         std::unique_ptr<relationExpr> rExpr;
         std::unique_ptr<listExpr> lExpr;
-        LogicalOperator operand;
+        LogicalOperator logical_operator;
     public:
         basicCondExpr() = default;
         ~basicCondExpr() = default;
+        std::string dump() override;
         Type type() override {
             return Type::BOOLEAN;
         }
@@ -216,7 +224,7 @@ class basicCondExpr : public Expr {
         }
 
         void setOperator(LogicalOperator op) {
-            operand = op;
+            logical_operator = op;
         }
 
 };
@@ -229,6 +237,7 @@ class conditionExpr : public Expr {
     public:
         conditionExpr() = default;
         ~conditionExpr() = default;
+        std::string dump() override;
         Type type() override {
             return Type::BOOLEAN;
         }
@@ -246,7 +255,7 @@ class conditionExpr : public Expr {
 class queryExpr : public Expr {
     
     private:
-        bool sellect;
+        bool select;
         bool collect;
         // Instance* instance;
         // Entity* entity;
@@ -259,12 +268,13 @@ class queryExpr : public Expr {
     public:
         queryExpr() = default;
         ~queryExpr() = default;
-        bool isSellect();
+        std::string dump() override;
+        bool isSelect();
         bool isCollect();
         Type type();
 
-        void setSellect(bool value) {
-            sellect = value;
+        void setSelect(bool value) {
+            select = value;
         }
 
         void setCollect(bool value) {
@@ -283,6 +293,15 @@ class queryExpr : public Expr {
             this->expr.reset(expr);
         }
 
+        std::shared_ptr<Entity> getEntity() {
+            return entity;
+        }
+
+        std::shared_ptr<Instance> getInstance() {
+            return instance;
+        }
+
+
 };
 
 class literal : public Expr {
@@ -300,5 +319,11 @@ class literal : public Expr {
         ~literal() = default;
         Type type();
 };
+
+std::string TypeToString(Type type);
+std::string LogicalOperatorToString(LogicalOperator op);
+std::string ArithmeticOperatorToString(ArithmeticOperator op);
+std::string QueryOperatorToString(QueryOperator op);
+std::string RelationOperatorToString(RelationOperator op);
 
 } // namespace RuleLanguage

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "EntityType.h"
+#include "Expr.h"
 #include "third_party/json_lib/json11.hpp"
 
 // using namespace std;
@@ -29,6 +30,7 @@ class Entity : public EntityType {
     const std::string &get_name() const;
     const std::map<std::string, std::shared_ptr<Attribute>>& get_attribute_list() const;
     const std::set<std::string> &get_constraints_set() const;
+    bool hasAttribute(std::string& attributr_name, RuleLanguage::Type type);
 
     const std::string toJSONString() const;
 

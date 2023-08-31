@@ -218,3 +218,39 @@ std::string RuleLanguage::RelationOperatorToString(RelationOperator op) {
         return "";
     }
 }
+
+std::string RuleLanguage::RelationOperatorToSuffixString(RelationOperator op) {
+    switch (op)
+    {
+    case RelationOperator::EQUALS:
+        return "";
+
+    case RelationOperator::GREATER:
+        return "_gt";
+
+    case RelationOperator::GREATER_OR_EQUALS:
+        return "_gte";
+
+    case RelationOperator::LESS_OR_EQUALS:
+        return "_lte";
+
+    case RelationOperator::LESS_THAN:
+        return "_lt";
+
+    case RelationOperator::NOT_EQUALS:
+        return "_not";
+
+    case RelationOperator::RELATION_NON:
+        return "relation_non";
+    
+    default:
+        return "";
+    }
+}
+
+Type definitionExpr::type() {
+    return instance->type();
+}
+std::string definitionExpr::dump() {
+    return instance->dump();
+}

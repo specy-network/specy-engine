@@ -32,26 +32,22 @@ void InitMockDataBase_NFT_4elements(MockDatabase_NFT& mockDatabase) {
     mockDatabase.insertTask("0x1004", TestTaskRule_4elements);
 }
 
-std::string MockDatabase_NFTlist::handleQuery(std::string& query, std::string& target){
+std::string MockDatabase_Taska::handleQuery(std::string& query, std::string& target){
     cout << target << endl;
     cout << query << endl;
-    if (target.compare("ics721") == 0) 
-        return handleICS721Query(query);
-
-    if (target.compare("rewards") == 0)
-        return handleRewardListQuery(query);
     
     if (target.compare("specy") == 0)
         return MockDatabase_NFT::handleSystemQuery(query);
 
+    if (target.compare("taska") == 0)
+        return MockDatabase_Taska::handleTaskaQuery(query);
+
     return "";
 }
 
-bool MockDatabase_NFTlist::matchDatabase (std::string& target) {
+bool MockDatabase_Taska::matchDatabase (std::string& target) {
     cout << "match database: " << target << endl; 
-    if (target.compare("ics721") == 0)
-        return true;
-    if (target.compare("rewards") == 0)
+    if (target.compare("taska") == 0)
         return true;
     if (target.compare("specy") == 0)
         return true;
@@ -59,51 +55,87 @@ bool MockDatabase_NFTlist::matchDatabase (std::string& target) {
 }
 
 
-std::string MockDatabase_NFTlist::handleRewardListQuery(std::string& query) {
-    Json::array lists;
-    lists.push_back("succ");
+std::string MockDatabase_Taska::handleTaskaQuery(std::string& query) {
 
-    Json::object list {
-        {"list", lists},
-    };
+    cout << "enter handleTaskaQuery: "<< query << endl;
+    if (query.find("inputdatas") != string::npos) {
+        cout << "enter inputdatas: "<< query << endl;
+        Json::array datas;
+        Json::object value {
+            {"pool" , 100}
+        };
+        datas.push_back(value);
+        Json::object data {
+            {"inputdatas", datas}
+        };
+        Json result = data;
+        return result.dump();
+    }
 
-    Json::object data {
-        {"data", Json::object{list}}
-    };
-    Json result = data;
-    return result.dump();
-}
+    if (query.find("outputdatas") != string::npos) {
+        cout << "enter outputdatas: "<< query << endl;
+        Json::array datas;
+        Json::object value {
+            {"deadline" , 2000},
+            {"pool", 100},
+            {"walkDirection", 300}
+        };
+        datas.push_back(value);
+        Json::object data {
+            {"outputdatas", datas}
+        };
+        Json result = data;
+        return result.dump();
+    }
 
-std::string MockDatabase_NFTlist::handleICS721Query(std::string& query) {
-    Json::object value1 {
-        {"receiver", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gdu"},
-        {"class_id", "succ"},
-    };
-    Json::object value2 {
-        {"receiver", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gdi"},
-        {"class_id", "succ"},
-    };
-    Json::object value3 {
-        {"receiver", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gduo"},
-        {"class_id", "succ"},
-    };
-    Json::object value4 {
-        {"receiver", "cosmos17teac5cla5j886k4pyr4xhyz252llnr09x4gduy"},
-        {"class_id", "succ"},
-    };
-    Json::array ics721list;
-    ics721list.push_back(value1);
-    ics721list.push_back(value2);
-    ics721list.push_back(value3);
-    ics721list.push_back(value4);
+    if (query.find("PoolDatas") != string::npos) {
+        cout << "enter PoolDatas: "<< query << endl;
+        Json::array datas;
+        Json::object value {
+            {"centerHead" , 105},
+            {"centerTail", 100},
+            {"pool", 100}
+        };
+        datas.push_back(value);
+        Json::object data {
+            {"PoolDatas", datas}
+        };
+        Json result = data;
+        return result.dump();
+    }
 
-    Json::object transfers {
-       { "interchainnftreceives", ics721list}
-    };
-    Json::object data {
-        {"data", Json::object{transfers}}
-    };
-    cout << "end" <<endl;
-    Json result = data;
-    return result.dump();
+    if (query.find("PoolSlot0s") != string::npos) {
+        cout << "enter PoolSlot0s: "<< query << endl;
+
+        Json::array datas;
+        Json::object value {
+            {"tick", 100},
+            {"pool", 100}
+        };
+        datas.push_back(value);
+        Json::object data {
+            {"PoolSlot0s", datas}
+        };
+        Json result = data;
+        return result.dump();
+    }
+    
+    if (query.find("BatchOrders") != string::npos) {
+        cout << "enter BatchOrders: "<< query << endl;
+
+        Json::array datas;
+        Json::object value {
+            {"orderId", 1},
+            {"direction", true},
+            {"tickLower", 100},
+            {"tickUpper", 105}
+        };
+        datas.push_back(value);
+        Json::object data {
+            {"BatchOrders", datas}
+        };
+        Json result = data;
+        return result.dump();
+    }
+    return "";
 }

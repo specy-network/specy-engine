@@ -13,6 +13,7 @@
 #include <set>
 #include "merklecpp.h"
 #include "sgx_tcrypto.h"
+#include "trusted/rule_visitors/SemanticModelEngine.h"
 // #include "openssl/sha.h"
 
 using namespace std;
@@ -99,6 +100,9 @@ RuleEnclaveStatus RuleProcessor::EvaluateRule(RequestContext *const request_cont
     tree->accept(&entity_collector);
 
     entity_collector.dump();
+
+    SemanticModelEngine semantic_model(&entity_collector);
+    bool execute_result = semantic_model.execute();
 
 
     return RuleEnclaveStatus::kOK;

@@ -22,35 +22,36 @@ enum Type {
 };
 
 enum LogicalOperator {
-    NOT = 0,
+    LOGICAL_NON = 0,
+    NOT,
     AND,
     OR,
-    LOGICAL_NON
 };
 
 enum ArithmeticOperator {
-    MULTIPLY = 0,
+    ARITH_NON = 0,
+    MULTIPLY,
     DIVIDE,
     MODULO,
     PLUS,
     MINUS,
-    ARITH_NON
 };
 
 enum QueryOperator {
-    SELECT = 0,
+    QUERY_NON = 0,
+    SELECT,
     COLLECT,
-    QUERY_NON
+
 };
 
 enum RelationOperator {
-    EQUALS = 0,
+    RELATION_NON = 0,
+    EQUALS,
     NOT_EQUALS,
     LESS_THAN,
     LESS_OR_EQUALS,
     GREATER,
     GREATER_OR_EQUALS,
-    RELATION_NON
 };
 
 class Expr {
@@ -79,18 +80,22 @@ class numberExpr : public Expr {
 
         void setOperator(ArithmeticOperator op) {
             arith_operator = op;
+            is_literal = false;
         }
 
         void setLeftExpr(numberExpr* expr) {
             left_expr.reset(expr);
+            is_literal = false;
         }
 
         void setRightExpr(numberExpr* expr) {
             right_expr.reset(expr);
+            is_literal = false;
         }
 
         void setValue(int64_t value) {
             this->value = value;
+            is_literal = true;
         }
 
         void setInstance(std::shared_ptr<Instance>& instance) {
@@ -99,10 +104,35 @@ class numberExpr : public Expr {
 
         std::string dump() override;
 
+        bool isLiteral() {
+            return is_literal;
+        }
+
+        int64_t getValue() {
+            return value;
+        }
+
+        std::shared_ptr<Instance> getInstance() {
+            return instance;
+        }
+
+        numberExpr* getLeftExpr() {
+            return left_expr.get();
+        }
+
+        numberExpr* getRightExpr() {
+            return right_expr.get();
+        }
+
+        ArithmeticOperator getOperator() {
+            return arith_operator;
+        }
+
     private:
         bool negative;
         /* TODO: use big number to instead*/
         int64_t value;
+        bool is_literal;
         ArithmeticOperator arith_operator;
         std::unique_ptr<numberExpr> left_expr;
         std::unique_ptr<numberExpr> right_expr;
@@ -135,6 +165,18 @@ class relationExpr : public Expr {
         void addOperator(RelationOperator op) {
             operators.push_back(op);
         }
+
+        numberExpr* getFirstNumberExpr() {
+            return first_expr.get();
+        }
+
+        std::vector<std::unique_ptr<numberExpr>>& getNumbers() {
+            return numbers;
+        }
+
+        std::vector<RelationOperator>& getOperators() {
+            return operators;
+        }
 };
 
 class listExpr : public Expr {
@@ -143,7 +185,7 @@ class listExpr : public Expr {
 
 class booleanExpr : public Expr {
     
-    private:
+    public:
         std::unique_ptr<Expr> expr;
         bool literalValue;
         std::shared_ptr<Instance> instance;
@@ -194,7 +236,7 @@ class logicalExpr : public Expr {
             boolean_expr.reset(expr);
         }
 
-    private:
+    public:
         LogicalOperator logical_operator;
         std::unique_ptr<booleanExpr> boolean_expr;
         std::unique_ptr<Expr> left_expr;
@@ -227,6 +269,14 @@ class basicCondExpr : public Expr {
             logical_operator = op;
         }
 
+        relationExpr* getRelationExpr() {
+            return rExpr.get();
+        }
+
+        LogicalOperator getOperator() {
+            return logical_operator;
+        }
+
 };
 
 class conditionExpr : public Expr {
@@ -250,11 +300,19 @@ class conditionExpr : public Expr {
             std::unique_ptr<basicCondExpr> expr_ptr(expr);
             basicExprs.push_back(std::move(expr_ptr));
         }
+
+        basicCondExpr* getBasicExpr() {
+            return basic_expr.get();
+        }
+
+        std::vector<std::unique_ptr<basicCondExpr>>& getBasicExprs() {
+            return basicExprs;
+        }
 };
 
 class queryExpr : public Expr {
     
-    private:
+    public:
         bool select;
         bool collect;
         // Instance* instance;
@@ -301,7 +359,18 @@ class queryExpr : public Expr {
             return instance;
         }
 
+        conditionExpr* getExpr() {
+            return expr.get();
+        }
 
+
+};
+
+class definitionExpr : public Expr {
+    public:
+        std::shared_ptr<Instance> instance;
+        Type type();
+        std::string dump();
 };
 
 class literal : public Expr {
@@ -325,5 +394,6 @@ std::string LogicalOperatorToString(LogicalOperator op);
 std::string ArithmeticOperatorToString(ArithmeticOperator op);
 std::string QueryOperatorToString(QueryOperator op);
 std::string RelationOperatorToString(RelationOperator op);
+std::string RelationOperatorToSuffixString(RelationOperator op);
 
 } // namespace RuleLanguage

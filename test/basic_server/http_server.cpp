@@ -47,23 +47,23 @@ void http_connection::process_request() {
     write_response();
 }
 
-// string http_connection::getSubgraphName(string& target) {
-//     smatch target_match;
-//     if (regex_search(target, target_match, regex(R"(/subgraphs/name/(*)/)"))) {
-//         return target_match[1].str();
-//     }
+string http_connection::getSubgraphName(string& target) {
+    smatch target_match;
+    if (regex_search(target, target_match, regex(R"(/subgraphs/name/(.*))"))) {
+        return target_match[1].str();
+    }
 
-//     return "";
-// }
+    return "";
+}
 
 void http_connection::create_response() {
     string target_string = request_.target();
     string request_body = request_.body();
     cout << "target_string : " << target_string << endl;
     cout << "request_body : " << request_body << endl;
-    // string target_name = getSubgraphName(target_string);
-    string target_name("specy");
-    // cout << target_name << endl;
+    string target_name = getSubgraphName(target_string);
+    // string target_name("specy");
+    cout << target_name << endl;
     if (testdatabase->matchDatabase(target_name)) {
         beast::ostream(response_.body()) << testdatabase->handleQuery(request_body, target_name);
     }

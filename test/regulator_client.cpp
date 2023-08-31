@@ -72,7 +72,7 @@ GraphNodeTestServer RegulatorClientTest::graphnode_server;
 TEST_F(RegulatorClientTest, NFTListFail1) {
 
     // registe your own database
-    MockDatabase_NFT* database_ = new MockDatabase_NFTlist();
+    MockDatabase_NFT* database_ = new MockDatabase_Taska();
     InitMockDataBase_NFT_4elements(*database_);
     testdatabase = database_;
 

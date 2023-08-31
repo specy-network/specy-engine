@@ -1,4 +1,5 @@
 #include "Query.h"
+#include "RuleEnclave_t.h"
 
 using namespace std;
 using namespace rule_check_proto;
@@ -63,6 +64,145 @@ string QueryBuilder::GenerateQueryString(EntitySet& entity, const RequestContext
 
     ocall_print_string(("GenerateQueryString(const EntitySet& entity, const RequestContext* context) : " + query_string).c_str(), __FILE__, __LINE__);
     return query_string;
+}
+
+string QueryBuilder::getConstrainFromInstance(Instance* instance, string query_entity) {
+    if (instance->getInstanceKind() == InstanceKind::SYMBOL) {
+        if (instance->getName().compare(query_entity) == 0) {
+            string query_attribute;
+            for (auto a : instance->get_attribute_list()) {
+                query_attribute.append(a.first).append(" ");
+            }
+            return query_attribute;
+        }
+    }
+
+    // TODO: After query data, we should update instance value
+    if (instance->getInstanceKind() == InstanceKind::SPECIFIC_ATTRIBUTE) {
+        auto& attributes = instance->get_attribute_list();
+        for (auto attribute : attributes) {
+            return attribute.second->getValueString();
+        }
+    }
+}
+
+string QueryBuilder::getConstrainFromNumberExpr(RuleLanguage::numberExpr* expr, string query_entity) {
+    string negative = "";
+    if (expr->isNegative()) {
+        negative.append("-");
+    }
+
+    if (expr->isLiteral()) {
+        return negative + std::to_string(expr->getValue());
+    }
+
+    if (expr->getInstance() != nullptr) {
+        return negative + getConstrainFromInstance(expr->getInstance().get(), query_entity);
+    }
+
+    string left_expr_str = getConstrainFromNumberExpr(expr->getLeftExpr(), query_entity);
+    string right_expr_str = getConstrainFromNumberExpr(expr->getRightExpr(), query_entity);
+
+    return negative + left_expr_str + RuleLanguage::ArithmeticOperatorToString(expr->getOperator()) + right_expr_str;
+}
+
+string QueryBuilder::getConstrainFromRelationExpr(RuleLanguage::relationExpr* expr, string query_entity) {
+    string first_number_expr_str = getConstrainFromNumberExpr(expr->getFirstNumberExpr(), query_entity);
+    string relation_suffix = RuleLanguage::RelationOperatorToSuffixString(expr->getOperators()[0]);
+    string second_numbr_expr_str = getConstrainFromNumberExpr(expr->getNumbers()[0].get(), query_entity);
+    return first_number_expr_str + relation_suffix + " : " + second_numbr_expr_str;
+}
+
+string QueryBuilder::getConstrainFromBasicCondExpr(RuleLanguage::basicCondExpr* expr, string query_entity) {
+    RuleLanguage::relationExpr* relation_expr = expr->getRelationExpr();
+    if (relation_expr != nullptr) {
+        return getConstrainFromRelationExpr(relation_expr, query_entity);
+    }
+
+    // RuleLanguage::listExpr* list_expr = expr->get
+
+    return "";
+}
+
+string QueryBuilder::getConstrainFromConditionExpr(RuleLanguage::conditionExpr* expr, string query_entity) {
+
+    std::vector<std::unique_ptr<RuleLanguage::basicCondExpr>>& exprs = expr->getBasicExprs(); 
+    if (exprs.size() == 0) {
+        return getConstrainFromBasicCondExpr(expr->getBasicExpr(), query_entity);
+    }
+
+    string LOGICAL_PREFIX = ":[";
+    string LOGICAL_SUFFIX = "]";
+    string first_expr_str = "{" + getConstrainFromBasicCondExpr(expr->getBasicExpr(), query_entity) + "}";
+
+    string query_str;
+    for (int i = 0; i < exprs.size(); i++) {
+        string logical_op_str = RuleLanguage::LogicalOperatorToString(exprs[i]->getOperator());
+        string next_expr_str = "{" + getConstrainFromBasicCondExpr(exprs[i].get(), query_entity) + "}";
+        if (query_str.empty()) {
+            query_str.append(logical_op_str)
+                .append(LOGICAL_PREFIX)
+                .append(first_expr_str)
+                .append(" , ")
+                .append(next_expr_str)
+                .append(LOGICAL_SUFFIX);
+        }
+        else {
+            string temp;
+            temp.append(logical_op_str)
+                .append(LOGICAL_PREFIX)
+                .append(query_str)
+                .append(" , ")
+                .append(next_expr_str)
+                .append(LOGICAL_SUFFIX);
+            query_str = temp;
+        }
+
+    }
+    return query_str;
+}
+
+string QueryBuilder::generateQueryString(shared_ptr<Instance> instance) {
+    if (instance->getInstanceKind() == InstanceKind::UNIQUE_ENTITY) {
+        string query_table = instance->getName() + "s";
+        string attributes_str = "";
+        for (auto attribute : instance->get_attribute_list()) {
+            attributes_str = attributes_str + attribute.first + " ";
+        }
+        string query_string;
+        query_string.append(QUERY_PREFIX)
+            .append(query_table)
+            .append(QUERY_ATTRIBUTES_PREFIX)
+            .append(attributes_str)
+            .append(QUERY_ATTRIBUTES_SUBFIX)
+            .append(QUERY_SUBFIX);
+        return query_string;
+    }
+
+    if (instance->getInstanceKind() == InstanceKind::EXPR) {
+        RuleLanguage::queryExpr* expr = dynamic_cast<RuleLanguage::queryExpr*>(instance->getExpr());
+        if (expr != nullptr) {
+            string query_table = expr->entity->get_name() + "s";
+            string attributes_str = "";
+            for (auto attribute : expr->entity->get_attribute_list()) {
+                attributes_str = attributes_str + attribute.first + " ";
+            }
+
+            string constraint_str = getConstrainFromConditionExpr(expr->getExpr(), expr->entity->get_name());
+            string query_string;
+            return query_string.append(QUERY_PREFIX)
+                .append(query_table)
+                .append(QUERY_CONSTRAINS_PREFIX)
+                .append(constraint_str)
+                .append(QUERY_CONSTRAINS_SUBFIX)
+                .append(QUERY_ATTRIBUTES_PREFIX)
+                .append(attributes_str)
+                .append(QUERY_ATTRIBUTES_SUBFIX)
+                .append(QUERY_SUBFIX);
+        }
+    }
+
+    return "error!";
 }
 
 

@@ -38,6 +38,8 @@ class Entity : public EntityType {
     bool isUnique();
 
     void addAttribute(const std::string &attribute_name, std::shared_ptr<Attribute>& attribute);
+    std::shared_ptr<Attribute> getAttribute(std::string attribute_name, RuleLanguage::Type type);
+
     void addConstraint(const std::string &attribute_name);
     void clearAttributes();
 

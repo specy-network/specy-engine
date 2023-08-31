@@ -78,3 +78,10 @@ string Entity::dump() {
 bool Entity::hasAttribute(string& attribute_name, RuleLanguage::Type type) {
     return attribute_list.find(attribute_name) != attribute_list.end() && attribute_list[attribute_name]->isAttributeType(type);
 }
+
+shared_ptr<Attribute> Entity::getAttribute(string attribute_name, RuleLanguage::Type type) {
+    if (hasAttribute(attribute_name, type)) {
+        return attribute_list[attribute_name];
+    }
+    return nullptr;
+}

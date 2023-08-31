@@ -83,14 +83,14 @@ void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, s
     ocall_print_string((string("KeepTrackOfNewInstance: ") +
                         instance_name + string(" related to ") +
                         entity_name).c_str(), __FILE__, __LINE__);
-    if (instance_map_.find(instance_name) == instance_map_.end()) {
+    if (global_instance_map_.find(instance_name) == global_instance_map_.end()) {
         shared_ptr<Instance> instance(new Instance(instance_name));
         if (!entity_name.empty()) {
             instance->setUniqueEntityName(entity_name);
             instance->addAttributes(entity_map_[entity_name]->get_attribute_list());
         }
         instance->setInstanceKind(InstanceKind::UNIQUE_ENTITY);
-        instance_map_.insert({instance_name, instance});
+        global_instance_map_.insert({instance_name, instance});
     } else {
         ocall_print_string((string("Error: ") +
                         instance_name + string(" has been defined! ")).c_str(), __FILE__, __LINE__);
@@ -100,22 +100,28 @@ void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, s
 void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::Expr* expr) {
     ocall_print_string((string("KeepTrackOfNewInstance: ") +
                         instance_name + string(" related to expr")).c_str(), __FILE__, __LINE__);
-    
-    ocall_print_string((string("test 0")).c_str(), __FILE__, __LINE__);
     auto& instance_map = rule_instance_map_[curr_rule_name_];
-
-    ocall_print_string((string("test 1")).c_str(), __FILE__, __LINE__);
-    if (instance_map.empty()) {
-        ocall_print_string((string("get a empty map")).c_str(), __FILE__, __LINE__);
-    }
-    ocall_print_string((string("test 2")).c_str(), __FILE__, __LINE__);
+    auto& instance_order = rule_instance_order_[curr_rule_name_];
     
     if (instance_map.find(instance_name) == instance_map.end()) {
         ocall_print_string((string("KeepTrackOfNewInstance: insert instance ") +
                         instance_name).c_str(), __FILE__, __LINE__);
         shared_ptr<Instance> instance(new Instance(instance_name));
-        instance->setExpr(expr);
+        instance_order.push_back(instance_name);
         instance->setInstanceKind(InstanceKind::EXPR);
+
+        if (dynamic_cast<RuleLanguage::queryExpr*>(expr) != nullptr) {
+            RuleLanguage::queryExpr* query_expr = dynamic_cast<RuleLanguage::queryExpr*>(expr);
+            if (query_expr->getEntity() != nullptr) {
+                instance->addAttributes(query_expr->getEntity()->get_attribute_list());
+            }
+
+            if (query_expr->getInstance() != nullptr) {
+                instance->addAttributes(query_expr->getInstance()->get_attribute_list());
+            }
+        }
+        
+        instance->setExpr(expr);
         instance_map[instance_name] = instance;
     } else {
         ocall_print_string((string("Error: ") +
@@ -123,35 +129,9 @@ void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, R
     }
 }
 
-void SymbolCollector::KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::queryExpr* expr) {
-    ocall_print_string((string("KeepTrackOfNewInstance: ") +
-                        instance_name + string(" related to queryexpr")).c_str(), __FILE__, __LINE__);
-
-    
-    auto& instance_map = rule_instance_map_[curr_rule_name_];
-    if (instance_map.empty()) {
-        ocall_print_string((string("get a empty map")).c_str(), __FILE__, __LINE__);
-    }
-    
-    
-    if (instance_map.find(instance_name) == instance_map.end()) {
-        shared_ptr<Instance> instance(new Instance(instance_name));
-        instance->setInstanceKind(InstanceKind::EXPR);
-        instance_map[instance_name] = instance;
-
-        if (expr->getEntity() != nullptr) {
-            instance->addAttributes(expr->getEntity()->get_attribute_list());
-        }
-
-        if (expr->getInstance() != nullptr) {
-            instance->addAttributes(expr->getInstance()->get_attribute_list());
-        }
-
-        instance->setExpr(expr);
-    } else {
-        ocall_print_string((string("Error: ") +
-                        instance_name + string(" has been defined! ")).c_str(), __FILE__, __LINE__);
-    }
+antlrcpp::Any SymbolCollector::visitEntitiesBlock(RuleParser::EntitiesBlockContext *context) {
+    entities_spaec_name = context->IDENTIFIER()->getText();
+    return RuleParserBaseVisitor::visitEntitiesBlock(context);
 }
 
 /* Overridden Visitor Member Functions */
@@ -190,6 +170,8 @@ antlrcpp::Any SymbolCollector::visitBasicRule(RuleParser::BasicRuleContext *cont
     setCurrRuleName(rule_name);
     InstanceMap m;
     rule_instance_map_[rule_name] = m;
+    InstanceOrder o;
+    rule_instance_order_[rule_name] = o;
     return RuleParserBaseVisitor::visitBasicRule(context);
 }
 
@@ -199,20 +181,21 @@ shared_ptr<Instance> SymbolCollector::handleSelectorIdent(RuleParser::SelectorId
     string attribute_name = context->attributeName()->getText();
     ocall_print_string((string("handleSelectorIdent: ") + instance_name + "." + attribute_name + " with type " + RuleLanguage::TypeToString(type)).c_str(), __FILE__, __LINE__);
 
-    if (instance_map_.find(instance_name) != instance_map_.end() && instance_map_[instance_name]->hasAttribute(attribute_name, type)) {
+    if (global_instance_map_.find(instance_name) != global_instance_map_.end() && global_instance_map_[instance_name]->hasAttribute(attribute_name, type)) {
         ocall_print_string((string("find selectorident in global instances ")).c_str(), __FILE__, __LINE__);
         shared_ptr<Instance> instance(new Instance(instance_name));
         instance->setType(type);
         instance->setInstanceKind(InstanceKind::SPECIFIC_ATTRIBUTE);
-        instance->addAttribute(attribute_name, instance_map_[instance_name]->getAttribute(attribute_name, type));
+        instance->addAttribute(attribute_name, global_instance_map_[instance_name]->getAttribute(attribute_name, type));
         return instance;
     }
 
     // return a symbol type instance, which not in instance map
     if (entity_map_.find(instance_name) != entity_map_.end() && entity_map_[instance_name]->hasAttribute(attribute_name, type)) {
         ocall_print_string((string("find selectorident in Entities ")).c_str(), __FILE__, __LINE__);
-        string instance_new_name = instance_name + "." + attribute_name;
-        shared_ptr<Instance> instance_temp(new Instance(instance_new_name));
+        // string instance_new_name = instance_name + "." + attribute_name;
+        shared_ptr<Instance> instance_temp(new Instance(instance_name));
+        instance_temp->addAttribute(attribute_name, entity_map_[instance_name]->getAttribute(attribute_name, type));
         instance_temp->setInstanceKind(InstanceKind::SYMBOL);
         return instance_temp;
     }
@@ -298,6 +281,7 @@ RuleLanguage::logicalExpr* SymbolCollector::handleLogicalExpr(RuleParser::Logica
 
     if (context->booleanExpr()) {
         RuleLanguage::logicalExpr *expr = new RuleLanguage::logicalExpr();
+        expr->setOperator(RuleLanguage::LogicalOperator::LOGICAL_NON);
         expr->setBooleanExpr(handleBooleanExpr(context->booleanExpr()));
         return expr;
     }
@@ -458,10 +442,10 @@ shared_ptr<Instance> SymbolCollector::getCurrRuleInstance(string name, RuleLangu
 }
 
 shared_ptr<Instance> SymbolCollector::getInstance(string name, RuleLanguage::Type type ) {
-    if (instance_map_.find(name) == instance_map_.end()) {
+    if (global_instance_map_.find(name) == global_instance_map_.end()) {
         return nullptr;
     }
-    auto instance = instance_map_[name];
+    auto instance = global_instance_map_[name];
     if (instance->type() != type) {
         return nullptr;
     }
@@ -677,7 +661,11 @@ antlrcpp::Any SymbolCollector::visitDefinitionStmt(RuleParser::DefinitionStmtCon
         KeepTrackOfNewInstance(instance_name, query_expr);
     }
 
-    // return RuleParserBaseVisitor::visitDefinitionStmt(context);
+    RuleLanguage::definitionExpr* expr = new RuleLanguage::definitionExpr();
+    expr->instance = rule_instance_map_[curr_rule_name_][instance_name];
+    unique_ptr<RuleLanguage::Expr> expr_ptr(expr);
+    rule_stmt_map_[curr_rule_name_].push_back(std::move(expr_ptr));
+
     return nullptr;
 }
 
@@ -837,7 +825,7 @@ antlrcpp::Any SymbolCollector::visitInputBlock(RuleParser::InputBlockContext *co
         input_instance_->setInstanceKind(InstanceKind::UNIQUE_ENTITY);
     }
 
-    instance_map_["inputdata"] = input_instance_;
+    global_instance_map_["inputdata"] = input_instance_;
 
     return RuleParserBaseVisitor::visitInputBlock(context);
 }
@@ -889,7 +877,7 @@ antlrcpp::Any SymbolCollector::visitOutputBlock(RuleParser::OutputBlockContext *
         output_instance_->setInstanceKind(InstanceKind::UNIQUE_ENTITY);
     }
 
-    instance_map_["outputdata"] = output_instance_;
+    global_instance_map_["outputdata"] = output_instance_;
 
     return RuleParserBaseVisitor::visitOutputBlock(context);
 }
@@ -929,5 +917,35 @@ void SymbolCollector::dump() {
 
 }
 
+std::unique_ptr<ExecuteRule> SymbolCollector::getExecuteRoot() {
+    return std::move(execute_root);
+}
 
+InstanceMap& SymbolCollector::getGlobalInstanceMap() {
+    return global_instance_map_;
+}
+
+std::map<std::string, std::shared_ptr<Entity>>& SymbolCollector::getEntityMap() {
+    return entity_map_;
+}
+std::map<std::string, InstanceMap>& SymbolCollector::getRuleInstanceMap() {
+    return rule_instance_map_;
+}
+std::map<std::string, RuleStmts>& SymbolCollector::getRuleStmtMap() {
+    return rule_stmt_map_;
+}
+std::shared_ptr<Instance> SymbolCollector::getInputInstance() {
+    return input_instance_;
+}
+std::shared_ptr<Instance> SymbolCollector::getOutputInstance() {
+    return output_instance_;
+}
+
+std::map<std::string, InstanceOrder>& SymbolCollector::getRuleInstanceOrder() {
+    return rule_instance_order_;
+}
+
+std::string SymbolCollector::getEntitiesSpace() {
+    return entities_spaec_name;
+}
 

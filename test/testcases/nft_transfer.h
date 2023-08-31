@@ -2,13 +2,14 @@
 #include "schema/nft_schema.h"
 #include "Regulator.pb.h"
 
-class MockDatabase_NFTlist : public MockDatabase_NFT {
+class MockDatabase_Taska : public MockDatabase_NFT {
     // function override by Database
     bool matchDatabase (std::string& target) override;
     std::string handleQuery(std::string& query, std::string& target) override;
 
-    std::string handleICS721Query(std::string& query);
-    std::string handleRewardListQuery(std::string& query);
+    std::string handleTaskaQuery(std::string& query);
+    std::string getSchemaName(std::string& query);
+
 };
 
 void InitMockDataBase_NFT_0elements(MockDatabase_NFT& mockDatabase);

@@ -34,6 +34,7 @@
 
 using InstanceMap = std::map<std::string, std::shared_ptr<Instance>>;
 using RuleStmts = std::vector<std::unique_ptr<RuleLanguage::Expr>>;
+using InstanceOrder = std::vector<std::string>;
 
 class ExecuteRule {
     public:
@@ -62,11 +63,12 @@ class SymbolCollector : public BaseVisitor
 private:
     // map from entity name (aka id) to entity request
     std::map<std::string, std::shared_ptr<Entity>> entity_map_;
-    InstanceMap instance_map_;
+    InstanceMap global_instance_map_;
 
     // TODO : For now, we did not order instance and rule stmt in one map.
     // so, for now, we seperate rule with data preparation part(rule_instance_map) and logic part(rul_stmt_map_)
     std::map<std::string, InstanceMap> rule_instance_map_;
+    std::map<std::string, InstanceOrder> rule_instance_order_;
     std::map<std::string, RuleStmts> rule_stmt_map_;
 
     std::unique_ptr<ExecuteRule> execute_root;
@@ -76,22 +78,31 @@ private:
     // record current context of rule
     std::string curr_rule_name_;
 
+    std::string entities_spaec_name;
+
 public:
     SymbolCollector() = default;
     ~SymbolCollector();
 
     /* Data Member Getters */
     const std::vector<Entity> get_entity_list() const;
-    RequestContext *const get_request_context();
     void dump();
+    std::unique_ptr<ExecuteRule> getExecuteRoot();
+    InstanceMap& getGlobalInstanceMap();
+    std::map<std::string, std::shared_ptr<Entity>>& getEntityMap();
+    std::map<std::string, InstanceMap>& getRuleInstanceMap();
+    std::map<std::string, RuleStmts>& getRuleStmtMap();
+    std::map<std::string, InstanceOrder>& getRuleInstanceOrder();
+    std::shared_ptr<Instance> getInputInstance();
+    std::shared_ptr<Instance> getOutputInstance();
+    std::string getEntitiesSpace();
+
 
 private:
     /* Internal Handler Member Functions */
     void KeepTrackOfNewEntity(const std::string &entity_name, std::string &attribute_name, RuleLanguage::Type type);
     void KeepTrackOfNewInstance(const std::string &instance_name, std::string &entity_name);
     void KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::Expr* expr);
-    void KeepTrackOfNewInstance(const std::string &instance_name, RuleLanguage::queryExpr* expr);
-
 
     void setCurrRuleName (std::string &rule_name);
 
@@ -135,6 +146,7 @@ public:
     /* override function from RuleParser  */
 
     // handle Entity block
+    virtual antlrcpp::Any visitEntitiesBlock(RuleParser::EntitiesBlockContext *context) override;
     virtual antlrcpp::Any visitEntityDecl(RuleParser::EntityDeclContext *context) override;
 
     // handle input block
